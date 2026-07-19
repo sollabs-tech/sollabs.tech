@@ -1,0 +1,86 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPost } from '../../data/posts';
+import { engageHref, products, withBase } from '../../site.config';
+
+const post = getPost('soc2-gke-series-b')!;
+const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
+const structuredData = [
+  {
+    '@type': 'BlogPosting',
+    headline: post.title,
+    datePublished: post.date,
+    description: post.description,
+    author: { '@type': 'Organization', name: 'Sol Labs' },
+    publisher: { '@id': `${siteOrigin}/#organization` },
+  },
+];
+---
+
+<Layout
+  title={`${post.title} · Sol Labs`}
+  description={post.description}
+  current="blog"
+  ogType="article"
+  publishedTime={post.date}
+  structuredData={structuredData}
+>
+  <article class="page-wrap">
+    <div class="prose">
+      <p class="meta">{post.date} · {post.icp}</p>
+      <h1>{post.title}</h1>
+      <p>
+        Series B teams on Google Cloud often hear two incomplete stories. The first: use a secure
+        multi-project landing zone and inherit Google’s platform controls. The second: buy GRC SaaS,
+        write policies, and collect screenshots. Both matter. Neither finishes the job when your
+        production surface is GKE.
+      </p>
+
+      <h2>What landing zones actually buy you</h2>
+      <p>
+        Org folders, baseline IAM, and logging foundations reduce blank-page risk. Google’s own SOC 2
+        reports cover the platform layer. Auditors still ask what <em>you</em> do with identities,
+        change management, network boundaries, and workload privileges on the clusters you run.
+        Practitioner guidance puts inherited controls in the minority of the control set — useful,
+        not sufficient (
+        <a href="https://linfordco.com/blog/google-cloud-gcp-soc-2/">Linford on GCP SOC 2</a>).
+      </p>
+
+      <h2>The GKE gap</h2>
+      <p>Starter Terraform rarely ships the full production control plane:</p>
+      <ul>
+        <li>Private clusters and restricted control-plane access</li>
+        <li>Workload Identity Federation instead of long-lived service account keys</li>
+        <li>GitOps (Argo CD) with SSO, least-privilege RBAC, and production sync gates</li>
+        <li>Git history and sync events retained as change evidence</li>
+        <li>Admission controls, namespace isolation, and audit log retention for the observation window</li>
+      </ul>
+      <p>
+        That gap is where enterprise deals stall: the GRC tool is green, the cluster still cannot
+        explain who shipped what, when, and under which approval.
+      </p>
+
+      <h2>GRC tools are complementary</h2>
+      <p>
+        Vanta, Drata, and peers are good at evidence collection and policy workflow. They do not
+        replace private GKE design or GitOps discipline. Positioning Sol Labs against them as a
+        “competitor” is a category error — the buyer needs both the platform wiring and the evidence
+        pipeline.
+      </p>
+
+      <h2>What a scoped sprint should leave behind</h2>
+      <p>
+        A useful engagement does not “get you certified.” It leaves Terraform, GitOps, and a control
+        map your team can operate — so SOC 2 observation is review of existing evidence, not a
+        scramble. See the outcome page and
+        <a href={products.kanto.href}>Kanto</a> for the product receipt behind this lane.
+      </p>
+
+      <p>
+        <a class="btn btn--primary" href={engageHref}>Book a call</a>
+        {' '}
+        <a class="btn btn--secondary" href={withBase('/outcomes/soc2-gke/')}>SOC 2 / GKE outcome</a>
+      </p>
+    </div>
+  </article>
+</Layout>

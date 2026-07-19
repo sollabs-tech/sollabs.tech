@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { posts } from '../../data/posts';
+import { brandName, withBase } from '../../site.config';
+---
+
+<Layout
+  title={`Blog · ${brandName}`}
+  description="Outcome-driven notes for Series B platform teams, ML infra, and private VJ tooling."
+  current="blog"
+>
+  <div class="page-wrap">
+    <div class="prose" style="max-width: none">
+      <h1>Blog</h1>
+      <p>Deep dives for each ICP — pain language first, products as receipts.</p>
+      <ul class="post-list">
+        {
+          posts.map((post) => (
+            <li>
+              <a href={withBase(`/blog/${post.slug}/`)}>
+                <p class="meta">
+                  {post.date} · {post.icp}
+                </p>
+                <h2>{post.title}</h2>
+                <p>{post.description}</p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</Layout>

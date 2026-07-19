@@ -1,0 +1,78 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPost } from '../../data/posts';
+import { engageHref, products, withBase } from '../../site.config';
+
+const post = getPost('vj-trust-local-audio')!;
+const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
+const structuredData = [
+  {
+    '@type': 'BlogPosting',
+    headline: post.title,
+    datePublished: post.date,
+    description: post.description,
+    author: { '@type': 'Organization', name: 'Sol Labs' },
+    publisher: { '@id': `${siteOrigin}/#organization` },
+  },
+];
+---
+
+<Layout
+  title={`${post.title} · Sol Labs`}
+  description={post.description}
+  current="blog"
+  ogType="article"
+  publishedTime={post.date}
+  structuredData={structuredData}
+>
+  <article class="page-wrap">
+    <div class="prose">
+      <p class="meta">{post.date} · {post.icp}</p>
+      <h1>{post.title}</h1>
+      <p>
+        Working VJs do not romanticize “the cloud.” Unreleased edits are livelihood. Stage tools are
+        judged by whether media is local, fast, and under the operator’s control — not by a signup
+        wall.
+      </p>
+
+      <h2>Local media is the culture</h2>
+      <p>
+        On the Resolume forums, cloud-only OneDrive or Dropbox files are a known way to freeze Arena
+        while the OS hydrates media (
+        <a href="https://resolume.com/forum/viewtopic.php?t=24016">OneDrive freeze thread</a>,
+        <a href="https://resolume.com/forum/viewtopic.php?t=19179">sync hang discussion</a>). The
+        advice from practitioners is blunt: keep performance media on local disks. Adjacent tooling
+        markets the same promise — local database, no account (
+        <a href="https://github.com/FyodorKrasniy/stagehand-vj">stagehand-vj</a>).
+      </p>
+
+      <h2>Upload is the trust cliff</h2>
+      <p>
+        A browser visualizer that requires uploading stems asks the operator to believe a stranger’s
+        retention policy on the worst night of the tour. Even if the shaders are excellent, the trust
+        model fails first. Content control shows up elsewhere in VJ ops too — rental machines, theft,
+        and who can touch the library (
+        <a href="https://resolume.com/forum/viewtopic.php?t=13989">securing content thread</a>).
+      </p>
+
+      <h2>What private in-browser inference has to prove</h2>
+      <ol>
+        <li>Load from local files for the core path</li>
+        <li>Analyze with Web Audio on-device</li>
+        <li>Offer real controls (EQ, MIDI, editable GLSL) — not a toy</li>
+        <li>Make the trust model obvious in the first minute</li>
+      </ol>
+      <p>
+        That is the
+        <a href={products.slerp.href}>Slerp</a> receipt: audio-reactive WebGL with local playback and
+        analysis. Shader craft is secondary to “your set does not leave the machine.”
+      </p>
+
+      <p>
+        <a class="btn btn--primary" href={engageHref}>Book a call</a>
+        {' '}
+        <a class="btn btn--secondary" href={withBase('/outcomes/private-vj-inference/')}>Private VJ outcome</a>
+      </p>
+    </div>
+  </article>
+</Layout>

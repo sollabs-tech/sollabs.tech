@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { brandName, contactEmail, engageHref, marketing } from '../site.config';
+---
+
+<Layout
+  title={`Engage · ${brandName}`}
+  description="Book a scoped discovery call with Sol Labs. Fit becomes a fixed statement of work."
+  current="engage"
+>
+  <div class="page-wrap">
+    <div class="prose">
+      <h1>Scoped discovery, then a fixed SOW.</h1>
+      <p>
+        We do not sell open-ended hours on the first call. You get a short conversation to confirm
+        ICP fit (usually Series B / growth on GCP with a GKE or model-fleet pain), then a written
+        scope with a done definition.
+      </p>
+
+      <h2>What “done” looks like</h2>
+      <ul>
+        <li>A named outcome (for example: audit-shaped GKE + GitOps controls mapped to evidence)</li>
+        <li>A time box (typical readiness sprint: weeks, not quarters)</li>
+        <li>Artifacts your team keeps: Terraform/GitOps, control map, runbook</li>
+      </ul>
+
+      <h2>Who should book</h2>
+      <p>{marketing.clarityLine}</p>
+
+      <h2>Book</h2>
+      <p>
+        Prefer email while calendar booking is wired:
+        <a href={`mailto:${contactEmail}?subject=Sol%20Labs%20discovery`}>{contactEmail}</a>
+      </p>
+      <p class="meta">
+        Replace this page’s CTA with your Cal.com (or equivalent) URL in
+        <code>site.config.ts</code> → <code>engageHref</code> (currently {engageHref}).
+      </p>
+      <a class="btn btn--primary btn--lg" href={`mailto:${contactEmail}?subject=Sol%20Labs%20discovery`}
+        >Email to book</a
+      >
+    </div>
+  </div>
+</Layout>

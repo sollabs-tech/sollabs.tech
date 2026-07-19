@@ -1,0 +1,96 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { engageHref, outcomes, withBase, type OutcomeSlug } from '../../site.config';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+
+export function getStaticPaths() {
+  return (Object.keys(outcomes) as OutcomeSlug[]).map((slug) => ({
+    params: { slug },
+  }));
+}
+
+const slug = Astro.params.slug as OutcomeSlug;
+const o = outcomes[slug];
+const proofPng = path.join(process.cwd(), 'public', 'proof', `${slug}.png`);
+const proofWebp = path.join(process.cwd(), 'public', 'proof', `${slug}.webp`);
+const proofWebp640 = path.join(process.cwd(), 'public', 'proof', `${slug}-640.webp`);
+const hasProof = existsSync(proofPng);
+const hasWebp = existsSync(proofWebp);
+const hasWebp640 = existsSync(proofWebp640);
+const webpSrcset = [
+  hasWebp640 ? `${withBase(`/proof/${slug}-640.webp`)} 640w` : null,
+  hasWebp ? `${withBase(`/proof/${slug}.webp`)} 1280w` : null,
+]
+  .filter(Boolean)
+  .join(', ');
+---
+
+<Layout
+  title={`${o.title} · Sol Labs`}
+  description={o.pageDescription}
+  current="outcomes"
+>
+  <article class="page-wrap">
+    <div class="prose">
+      <p class="meta">
+        Outcome · <a href={o.productHref} rel="noopener noreferrer">{o.product}</a>
+      </p>
+      <h1>{o.title}</h1>
+      <p style="font-size: 1.15rem; color: var(--color-label-secondary)">{o.lead}</p>
+      <div class="lp-cta-row" style="margin: 1.5rem 0 2rem">
+        <a class="btn btn--primary" href={engageHref}>{o.cta}</a>
+        <a class="btn btn--secondary" href={withBase(`/blog/${o.blogSlug}/`)}>Read the deep dive</a>
+      </div>
+
+      <h2>{o.painTitle}</h2>
+      <p>{o.painBody}</p>
+
+      <h2>{o.proofTitle}</h2>
+      <p>{o.proofBody}</p>
+      <figure class="proof-frame">
+        {
+          hasProof ? (
+            <picture>
+              {webpSrcset && (
+                <source
+                  type="image/webp"
+                  srcset={webpSrcset}
+                  sizes="(max-width: 720px) 100vw, 40rem"
+                />
+              )}
+              <img
+                src={withBase(`/proof/${slug}.png`)}
+                alt={`${o.product} product screenshot`}
+                width="1280"
+                height="800"
+                decoding="async"
+                loading="lazy"
+              />
+            </picture>
+          ) : (
+            <div class="proof-frame--placeholder">
+              <p>
+                Live product:{' '}
+                <a href={o.productHref}>{o.productHref.replace('https://', '')}</a>
+              </p>
+            </div>
+          )
+        }
+        <figcaption class="proof-frame__caption">
+          {o.product} — shipped proof for this outcome.{' '}
+          <a href={o.productHref}>Open product</a>
+        </figcaption>
+      </figure>
+
+      <h2>Method</h2>
+      <ul>
+        {o.method.map((step) => <li>{step}</li>)}
+      </ul>
+
+      <h2>Next step</h2>
+      <p>If this pain is active, book a scoped discovery call. Fit becomes a fixed SOW.</p>
+      <a class="btn btn--primary btn--lg" href={engageHref}>{o.cta}</a>
+    </div>
+  </article>
+</Layout>

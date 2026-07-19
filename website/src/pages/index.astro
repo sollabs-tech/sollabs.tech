@@ -1,0 +1,121 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { brandName, engageHref, marketing, outcomes, withBase } from '../site.config';
+
+const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
+const structuredData = [
+  {
+    '@type': 'ProfessionalService',
+    '@id': `${siteOrigin}/#service`,
+    name: brandName,
+    description: marketing.pageDescription,
+    url: `${siteOrigin}/`,
+    areaServed: 'Worldwide',
+    provider: { '@id': `${siteOrigin}/#organization` },
+  },
+  {
+    '@type': 'FAQPage',
+    '@id': `${siteOrigin}/#faq`,
+    mainEntity: marketing.faq.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  },
+];
+
+const outcomeList = Object.values(outcomes);
+---
+
+<Layout
+  title={`${brandName} · Platform outcomes with receipts`}
+  description={marketing.pageDescription}
+  current="home"
+  structuredData={structuredData}
+>
+  <div class="lp">
+    <section class="lp-hero" aria-labelledby="hero-title">
+      <div class="lp-hero__grid">
+        <div class="lp-hero__copy">
+          <p class="lp-kicker">{brandName}</p>
+          <h1 id="hero-title" class="lp-title">{marketing.heroTitle}</h1>
+          <p class="lp-lead">{marketing.heroLead}</p>
+          <div class="lp-cta-row">
+            <a class="btn btn--primary btn--lg" href={engageHref}>{marketing.primaryCta}</a>
+            <a class="btn btn--secondary btn--lg" href="#outcomes">{marketing.secondaryCta}</a>
+          </div>
+        </div>
+        <div class="lp-hero__visual" aria-label="Primary outcome proof">
+          <div class="lp-hero__visual-inner">
+            <span class="lp-hero__visual-label">Primary outcome</span>
+            <p class="lp-hero__visual-title">Audit-shaped GKE + GitOps</p>
+            <p class="lp-hero__visual-meta">
+              Evidence from deploys — not a scramble before the observation period.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lp-trust" aria-label="Trust signals">
+      <ul class="lp-trust__row">
+        {marketing.trustPills.map((pill) => <li class="lp-trust__pill">{pill}</li>)}
+      </ul>
+    </section>
+
+    <section class="lp-section" aria-labelledby="pain-title">
+      <h2 id="pain-title" class="lp-section-title">{marketing.painTitle}</h2>
+      <p class="lp-section-lead">{marketing.painLead}</p>
+      <p class="lp-clarity">{marketing.clarityLine}</p>
+    </section>
+
+    <section class="lp-section" id="outcomes" aria-labelledby="outcomes-title">
+      <h2 id="outcomes-title" class="lp-section-title">{marketing.outcomesTitle}</h2>
+      <div class="outcome-grid">
+        {
+          outcomeList.map((o) => (
+            <a class="outcome-link" href={withBase(`/outcomes/${o.slug}/`)}>
+              <span class="outcome-link__product">{o.product}</span>
+              <h3>{o.title}</h3>
+              <p>{o.lead}</p>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="lp-section" aria-labelledby="method-title">
+      <h2 id="method-title" class="lp-section-title">{marketing.methodTitle}</h2>
+      <ol class="method-list">
+        {
+          marketing.methodSteps.map((step) => (
+            <li>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="lp-section" aria-labelledby="faq-title">
+      <h2 id="faq-title" class="lp-section-title">{marketing.faqTitle}</h2>
+      <div class="faq">
+        {
+          marketing.faq.map((item) => (
+            <details>
+              <summary>{item.q}</summary>
+              <p>{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="lp-final" aria-labelledby="final-title">
+      <h2 id="final-title" class="lp-section-title">{marketing.finalCtaHeadline}</h2>
+      <p class="lp-section-lead">{marketing.finalCtaLead}</p>
+      <a class="btn btn--primary btn--lg" href={engageHref}>{marketing.finalPrimaryCta}</a>
+    </section>
+  </div>
+</Layout>

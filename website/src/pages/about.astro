@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { brandName, products } from '../site.config';
+---
+
+<Layout
+  title={`About · ${brandName}`}
+  description="Sol Labs ships outcomes for platform teams, proven with Kanto, Pulsys, and Slerp."
+  current="about"
+>
+  <div class="page-wrap">
+    <div class="prose">
+      <h1>Outcomes with receipts.</h1>
+      <p>
+        {brandName} is a consulting practice for platform teams who need painful outcomes fixed on a
+        clock — not a slide deck of services. We lead with Series B SOC 2–ready GKE and GitOps, and
+        prove delivery with products already in the wild.
+      </p>
+
+      <h2>Shipped proof</h2>
+      <ul>
+        <li>
+          <a href={products.kanto.href}>{products.kanto.name}</a> — SOC 2 readiness on GCP / GKE
+        </li>
+        <li>
+          <a href={products.pulsys.href}>{products.pulsys.name}</a> — Hugging Face pull-through cache
+        </li>
+        <li>
+          <a href={products.slerp.href}>{products.slerp.name}</a> — private in-browser audio-reactive
+          visuals
+        </li>
+      </ul>
+
+      <h2>What we are not</h2>
+      <p>
+        We are not a hyperscale partner directory, a GRC SaaS, or a “full-stack” body shop. If your
+        pain is not active, we will say so on the discovery call.
+      </p>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.astro/
+website/test-results/
+website/playwright-report/
+website/lighthouse-results/
+.DS_Store
+*.log
+.env
+.env.*
+
+# Internal — never publish
+docs/strategy/
+docs/research/
+**/positioning.md

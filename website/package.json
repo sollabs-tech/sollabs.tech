@@ -1,0 +1,27 @@
+{
+  "name": "sollabs-website",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "brand": "node scripts/render-brand.mjs",
+    "proof": "node scripts/capture-proof.mjs",
+    "screenshot": "npm run build && playwright test",
+    "screenshot:update": "npm run build && playwright test --update-snapshots",
+    "lighthouse": "npm run build && node scripts/lighthouse-gate.mjs",
+    "lighthouse:run": "node scripts/lighthouse.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/instrument-sans": "^5.2.8",
+    "@fontsource-variable/source-serif-4": "^5.2.9",
+    "astro": "^5.13.0",
+    "sharp": "^0.34.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.0",
+    "lighthouse": "^12.8.2"
+  }
+}

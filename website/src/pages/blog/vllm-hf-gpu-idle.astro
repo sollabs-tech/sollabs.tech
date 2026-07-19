@@ -1,0 +1,84 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPost } from '../../data/posts';
+import { engageHref, products, withBase } from '../../site.config';
+
+const post = getPost('vllm-hf-gpu-idle')!;
+const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
+const structuredData = [
+  {
+    '@type': 'BlogPosting',
+    headline: post.title,
+    datePublished: post.date,
+    description: post.description,
+    author: { '@type': 'Organization', name: 'Sol Labs' },
+    publisher: { '@id': `${siteOrigin}/#organization` },
+  },
+];
+---
+
+<Layout
+  title={`${post.title} · Sol Labs`}
+  description={post.description}
+  current="blog"
+  ogType="article"
+  publishedTime={post.date}
+  structuredData={structuredData}
+>
+  <article class="page-wrap">
+    <div class="prose">
+      <p class="meta">{post.date} · {post.icp}</p>
+      <h1>{post.title}</h1>
+      <p>
+        On Kubernetes, “just pull from Hugging Face” is fine for a laptop. In CI matrices and vLLM
+        replica fleets, it is a cost and availability control. The Hub is a dependency you do not
+        operate — and GPUs do not pause their billing while weights crawl across the public internet.
+      </p>
+
+      <h2>Rate limits are a production event</h2>
+      <p>
+        Hugging Face publishes resolver and API quotas. Anonymous traffic is limited per IP; shared
+        CI egress burns that budget quickly (
+        <a href="https://huggingface.co/docs/hub/en/rate-limits">Hub rate limits</a>).
+        Hugging Face’s own tokenizers CI caches fixtures and authenticates downloads for that reason
+        (
+        <a href="https://github.com/huggingface/tokenizers/commit/3ba8ad0061a885baf052bbb7bbd22857e73e0c4e"
+          >tokenizers CI change</a
+        >). Operators see 429s that look like hung downloads when clients sleep on <code>RateLimit</code>
+        headers.
+      </p>
+
+      <h2>Idle GPU time is the bill you feel</h2>
+      <p>
+        Practitioner write-ups on GKE model caching show multi‑tens of minutes of cold pull for large
+        weights, with accelerators billed while waiting. Even rough $/hour math on A100-class nodes
+        makes ten restarts a week material — before counting duplicate egress across replicas (
+        <a href="https://hrittikhere.com/posts/model-caching-kubernetes-gke">model caching on GKE</a>).
+        Treat the number as directional until you measure your fleet; the mechanism is not.
+      </p>
+
+      <h2>Cache is an ops control</h2>
+      <p>
+        Authenticated tokens raise Hub quotas. They do not remove Hub as a scale-out SPOF. A
+        pull-through cache with pre-warm and optional cached-only misses keeps warm hits on disk you
+        control. That is the Pulsys outcome — client-compatible via <code>HF_ENDPOINT</code>, with
+        published warm-path measurements on
+        <a href={products.pulsys.href}>pulsys.io</a>.
+      </p>
+
+      <h2>Pitch order that matches buyer pain</h2>
+      <ol>
+        <li>Dollars of idle GPU and egress avoided</li>
+        <li>Hub reliability when you scale or recover nodes</li>
+        <li>Token isolation and auth defaults</li>
+        <li>Kernel warm-path performance (last)</li>
+      </ol>
+
+      <p>
+        <a class="btn btn--primary" href={engageHref}>Book a call</a>
+        {' '}
+        <a class="btn btn--secondary" href={withBase('/outcomes/model-cache-cost/')}>Model cache outcome</a>
+      </p>
+    </div>
+  </article>
+</Layout>
