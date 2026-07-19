@@ -15,7 +15,7 @@ export default defineConfig({
     baseURL: BASE,
     trace: 'off',
     screenshot: 'off',
-    colorScheme: 'dark',
+    colorScheme: 'light',
   },
   projects: [
     {

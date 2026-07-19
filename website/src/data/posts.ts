@@ -4,18 +4,18 @@ export type Post = {
   description: string;
   date: string;
   icp: string;
-  outcomeSlug: 'soc2-gke' | 'model-cache-cost' | 'private-vj-inference';
+  outcomeSlug: 'gke-platform' | 'model-cache-cost' | 'private-vj-inference';
 };
 
 export const posts: Post[] = [
   {
     slug: 'soc2-gke-series-b',
-    title: 'The GKE gap in “SOC 2 on GCP” checklists',
+    title: 'The GKE gap beyond landing-zone Terraform',
     description:
-      'Why Series B teams stall between landing-zone Terraform, GRC SaaS, and what auditors ask about Kubernetes change evidence.',
+      'Why platform teams stall between starter GCP Terraform and a production GKE + GitOps control plane.',
     date: '2026-07-19',
-    icp: 'Series B CTO / Head of Platform',
-    outcomeSlug: 'soc2-gke',
+    icp: 'Head of Platform / GCP architect',
+    outcomeSlug: 'gke-platform',
   },
   {
     slug: 'vllm-hf-gpu-idle',

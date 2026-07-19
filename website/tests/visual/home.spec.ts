@@ -20,11 +20,11 @@ test.describe('home visual', () => {
     });
   });
 
-  test('outcomes section', async ({ page }, testInfo) => {
-    const outcomes = page.locator('#outcomes');
-    await outcomes.scrollIntoViewIfNeeded();
+  test('capabilities section', async ({ page }, testInfo) => {
+    const capabilities = page.locator('#capabilities');
+    await capabilities.scrollIntoViewIfNeeded();
     await expect(page.locator('.outcome-link')).toHaveCount(3);
-    await outcomes.screenshot({
+    await capabilities.screenshot({
       path: path.join(OUT, testInfo.project.name, 'outcomes.png'),
     });
   });
@@ -49,8 +49,8 @@ test.describe('home visual', () => {
   });
 
   test('outcome and blog routes', async ({ page }) => {
-    await page.goto('./outcomes/soc2-gke/');
-    await expect(page.locator('h1')).toContainText('SOC 2');
+    await page.goto('./outcomes/gke-platform/');
+    await expect(page.locator('h1')).toContainText('GKE');
     await page.goto('./blog/vllm-hf-gpu-idle/');
     await expect(page.locator('h1')).toContainText('Hugging Face');
     await page.goto('./engage/');
