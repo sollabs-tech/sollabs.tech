@@ -37,9 +37,8 @@ jobs:
         working-directory: website
         env:
           PUBLIC_REPO_URL: https://github.com/sollabs-tech/sollabs.tech
-          # Project Pages until custom domain is verified for this org (see docs/deploy/github-pages.md).
-          PUBLIC_SITE_URL: https://sollabs-tech.github.io
-          PUBLIC_BASE_PATH: /sollabs.tech/
+          PUBLIC_SITE_URL: https://sollabs.tech
+          PUBLIC_BASE_PATH: /
         run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
