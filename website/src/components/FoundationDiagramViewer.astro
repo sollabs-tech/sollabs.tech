@@ -1,0 +1,107 @@
+---
+import { foundationDiagrams, withBase } from '../site.config';
+
+const diagrams = foundationDiagrams.map((d) => ({
+  title: d.title,
+  caption: d.caption,
+  src: withBase(d.src),
+}));
+---
+
+<div
+  class="foundation-viewer"
+  data-foundation-viewer
+  data-diagrams={JSON.stringify(diagrams)}
+>
+  <div class="foundation-viewer__layout">
+    <div
+      class="foundation-viewer__steps"
+      role="list"
+      aria-label="Foundation architecture steps"
+      data-foundation-mobile-strip
+    >
+      {
+        diagrams.map((d, i) => (
+          <button
+            type="button"
+            class="foundation-step"
+            data-foundation-step
+            aria-pressed={i === 0 ? 'true' : 'false'}
+            role="listitem"
+          >
+            <span class="foundation-step__num" aria-hidden="true">
+              {i + 1}
+            </span>
+            <span class="foundation-step__text">
+              <span class="foundation-step__title">{d.title}</span>
+              <span class="foundation-step__caption">{d.caption}</span>
+            </span>
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="foundation-viewer__preview-wrap">
+      <button
+        type="button"
+        class="foundation-viewer__preview"
+        data-foundation-preview
+        aria-label="Open diagram fullscreen"
+      >
+        <img
+          class="foundation-viewer__preview-img foundation-viewer__preview-img--loading"
+          data-foundation-preview-img
+          alt={diagrams[0].title}
+          width="960"
+          height="640"
+          decoding="async"
+        />
+        <span class="foundation-viewer__preview-hint">Click to enlarge</span>
+      </button>
+      <p class="foundation-viewer__preview-caption" data-foundation-preview-caption>
+        {diagrams[0].caption}
+      </p>
+    </div>
+  </div>
+
+  <p class="visually-hidden" aria-live="polite" data-foundation-live />
+
+  <dialog class="foundation-dialog" data-foundation-dialog aria-labelledby="foundation-dialog-title">
+    <div class="foundation-dialog__inner">
+      <header class="foundation-dialog__header">
+        <p id="foundation-dialog-title" class="foundation-dialog__counter" data-foundation-dialog-counter>
+          1 / {diagrams.length}
+        </p>
+        <button type="button" class="foundation-dialog__close" data-foundation-dialog-close>
+          Close
+        </button>
+      </header>
+      <div class="foundation-dialog__body">
+        <button type="button" class="foundation-dialog__nav" data-foundation-dialog-prev aria-label="Previous diagram">
+          ‹
+        </button>
+        <figure class="foundation-dialog__figure">
+          <img
+            class="foundation-dialog__img"
+            data-foundation-dialog-img
+            alt={diagrams[0].title}
+            width="1280"
+            height="900"
+            decoding="async"
+          />
+          <figcaption class="foundation-dialog__caption" data-foundation-dialog-caption>
+            {diagrams[0].caption}
+          </figcaption>
+        </figure>
+        <button type="button" class="foundation-dialog__nav" data-foundation-dialog-next aria-label="Next diagram">
+          ›
+        </button>
+      </div>
+      <p class="foundation-dialog__hint">Use arrow keys to navigate. Press Escape to close.</p>
+    </div>
+  </dialog>
+</div>
+
+<script>
+  import '../scripts/foundation-diagrams.ts';
+</script>

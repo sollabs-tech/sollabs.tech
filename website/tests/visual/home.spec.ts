@@ -36,11 +36,11 @@ test.describe('home visual', () => {
       'AI Infrastructure',
     );
     await expect(page.locator('#capabilities .challenge-item__service').nth(3)).toHaveText(
-      'Application Development on Google Cloud',
+      'AI Application Development',
     );
     await expect(page.locator('#capabilities .challenge-item__more')).toHaveCount(4);
-    await expect(page.locator('.proof-card')).toHaveCount(3);
-    await expect(page.getByText('In-house project · Slerp · On-device AI inference')).toBeVisible();
+    await expect(page.locator('.proof-card')).toHaveCount(2);
+    await expect(page.getByText('Secure on-device AI when sensitive media cannot go to the cloud')).toBeVisible();
     await capabilities.screenshot({
       path: path.join(OUT, testInfo.project.name, 'outcomes.png'),
     });
@@ -49,7 +49,7 @@ test.describe('home visual', () => {
   test('labs section', async ({ page }, testInfo) => {
     const labs = page.locator('#proof-title').locator('..');
     await labs.scrollIntoViewIfNeeded();
-    await expect(page.locator('.proof-card')).toHaveCount(3);
+    await expect(page.locator('.proof-card')).toHaveCount(2);
     await labs.screenshot({
       path: path.join(OUT, testInfo.project.name, 'labs.png'),
     });
@@ -85,8 +85,7 @@ test.describe('home visual', () => {
     await expect(page.locator('#solutions-title')).toHaveText('Our services');
     await expect(page.locator('.solutions__offer')).toHaveCount(4);
     await expect(page.locator('.solutions__offer-pain')).toHaveCount(0);
-    await expect(page.getByText('In-house project · Kanto')).toBeVisible();
-    await expect(page.getByText('In-house project · Pulsys')).toBeVisible();
+    await expect(page.getByText('Lower AI infrastructure cost and startup delay')).toBeVisible();
     await expect(page.getByText('Customer Spotlight')).toHaveCount(0);
     await page.locator('.page-hero').screenshot({
       path: path.join(OUT, testInfo.project.name, 'services-hero.png'),
@@ -130,7 +129,6 @@ test.describe('home visual', () => {
     ['blog-vllm-hf-gpu-idle', './blog/vllm-hf-gpu-idle/'],
     ['blog-gemini-no-api-keys-org-policy', './blog/gemini-no-api-keys-org-policy/'],
     ['blog-zero-trust-gitops-gke-connect', './blog/zero-trust-gitops-gke-connect/'],
-    ['work-kanto', './work/kanto/'],
     ['work-pulsys', './work/pulsys/'],
     ['work-slerp', './work/slerp/'],
   ];

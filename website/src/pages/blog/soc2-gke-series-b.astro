@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getPost } from '../../data/posts';
-import { engageHref, projects, withBase } from '../../site.config';
+import { engageHref, withBase } from '../../site.config';
 
 const post = getPost('soc2-gke-series-b')!;
 const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
@@ -83,9 +83,11 @@ const structuredData = [
       <p>
         A useful engagement does not “get you certified.” It leaves Terraform, GitOps, and a control
         map your team can operate — so SOC 2 observation is review of existing evidence, not a
-        scramble. See the outcome page and
-        <a href={projects.kanto.href}>Kanto</a> to see this GKE and GitOps architecture implemented
-        in a product.
+        scramble. See the
+        <a href={withBase('/services/platform-engineering/')}>Platform Engineering</a> reference
+        architecture and
+        <a href={withBase('/services/gke-soc2-readiness/')}>GKE SOC 2 Readiness</a> offer for how
+        landing-zone and cluster controls fit together.
       </p>
 
       <p>

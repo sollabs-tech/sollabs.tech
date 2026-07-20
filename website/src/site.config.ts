@@ -21,10 +21,43 @@ export const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN ?? 'solla
 export { withBase };
 
 export const projects = {
-  kanto: { name: 'Kanto', href: 'https://kanto.ai' },
   pulsys: { name: 'Pulsys', href: 'https://pulsys.io' },
   slerp: { name: 'Slerp', href: 'https://slerp.audio' },
 } as const;
+
+/** GCP landing-zone blueprint — six draw.io exports (ref: Google Cloud foundation architecture). */
+export const foundationDiagrams = [
+  {
+    title: 'Bootstrap',
+    caption: 'Bootstrap Terraform CI/CD',
+    src: '/diagrams/gcp-foundation/bootstrap.svg',
+  },
+  {
+    title: 'Organization Setup',
+    caption: 'Setup organization, centralized monitoring',
+    src: '/diagrams/gcp-foundation/org.svg',
+  },
+  {
+    title: 'Environment Setup',
+    caption: 'Initialize environment settings',
+    src: '/diagrams/gcp-foundation/env.svg',
+  },
+  {
+    title: 'Shared VPC',
+    caption: 'Create VPCs, VPN, and firewall rules',
+    src: '/diagrams/gcp-foundation/net.svg',
+  },
+  {
+    title: 'Projects',
+    caption: 'Bootstrap application projects and CI/CD',
+    src: '/diagrams/gcp-foundation/prj.svg',
+  },
+  {
+    title: 'Applications',
+    caption: 'Deploy GKE applications',
+    src: '/diagrams/gcp-foundation/apps.svg',
+  },
+] as const;
 
 /**
  * ICP: Head / VP of Platform (and DevSecOps leads) at B2B product companies on GCP —
@@ -62,12 +95,13 @@ export const marketing = {
     {
       serviceSlug: 'platform-engineering',
       title: "Architecture that can't keep up with growth",
-      body: 'Environments drift, delivery slows, and every new service adds process instead of leverage.',
+      body: 'Environments drift, delivery slows, and starter Terraform rarely ships the enterprise landing zone your security team expects.',
     },
     {
       serviceSlug: 'gke-soc2-readiness',
       title: 'Security and compliance blocking your roadmap',
-      body: 'Enterprise reviews and SOC 2 expose gaps in access, change control, and evidence — procurement stalls until the platform can answer.',
+      // DoiT Optessa (doit.com/customers/optessa) — SOC2 needs audit-ready control + evidence cycles
+      body: 'Enterprise reviews and SOC 2 expose gaps in access, change control, and evidence — procurement stalls until the platform can answer with audit-ready delivery, not verbal assurances.',
     },
     {
       serviceSlug: 'ai-infrastructure',
@@ -76,21 +110,20 @@ export const marketing = {
     },
     {
       serviceSlug: 'application-development',
-      title: 'Build vs buy blocking what you ship next',
-      body: 'Teams stall choosing between GCP managed services and a custom build — and the wrong call wastes quarters of engineering time.',
+      title: 'AI applications blocked by where inference runs',
+      body: 'Cloud, on-device, and hybrid paths each trade cost, privacy, and time-to-ship — teams stall before the first production release.',
     },
   ] as const,
 
   /**
    * Services ↔ case studies are linked by caseStudySlug (never by array index).
-   * Platform Engineering is the general lane; Kanto proves GKE SOC 2 Readiness only.
    */
   services: [
     {
       slug: 'platform-engineering',
       title: 'Platform Engineering',
-      // Zencore ZenBuild exact — consulting delivery, not an IDP product
-      body: 'Advisory and hands-on implementation services delivered globally.',
+      // Zencore Cloud Foundations capability (zencore.dev/solutions/cloud-native-infrastructure/)
+      body: 'The core building blocks — Infrastructure as Code, policy governance, identity and access management, and networking — implemented as a rock-solid foundation for everything you deploy on Google Cloud.',
       href: '/services/platform-engineering/',
       caseStudySlug: null as string | null,
     },
@@ -99,7 +132,7 @@ export const marketing = {
       title: 'GKE SOC 2 Readiness',
       body: 'Regulatory-ready GKE foundations: reviewable delivery, identity-scoped access, and evidence that enterprise security questionnaires can trust.',
       href: '/services/gke-soc2-readiness/',
-      caseStudySlug: 'kanto',
+      caseStudySlug: null as string | null,
     },
     {
       slug: 'ai-infrastructure',
@@ -110,8 +143,9 @@ export const marketing = {
     },
     {
       slug: 'application-development',
-      title: 'Application Development on Google Cloud',
-      body: 'Ship production apps on Cloud Run, GKE, and Vertex AI — after a build-vs-buy assessment so you do not custom-build what Google Cloud already sells.',
+      title: 'AI Application Development',
+      // Zencore AI solutions (zencore.dev) — cloud, on-device, and hybrid AI app delivery
+      body: 'Ship AI-powered applications in the cloud, on-device, or hybrid — production delivery your team can operate.',
       href: '/services/application-development/',
       caseStudySlug: 'slerp',
     },
@@ -120,54 +154,12 @@ export const marketing = {
   // Labs — Sol Labs' own builds, not client work (ref: Google Labs / Vercel Labs / Cloudflare)
   caseStudiesTitle: 'Labs',
   caseStudiesLead: '',
-  // Honest per-item descriptor (user-selected)
-  caseStudyKind: 'In-house project',
   // Zencore short CTA
   caseStudyCta: 'Learn more',
   caseStudies: [
     {
-      slug: 'kanto',
-      name: 'Kanto',
-      eyebrow: 'In-house project',
-      serviceSlug: 'gke-soc2-readiness',
-      title: 'GKE delivery that stands up to SOC 2 and enterprise review',
-      summary:
-        'How Sol Labs built a centralized delivery model for private GKE — reviewable changes, less standing access, and an operating model the team can own when auditors and customers ask.',
-      body: 'One consistent delivery path across GCP environments — with change history and access model that security reviews can inspect.',
-      metric: 'Less manual access · consistent change control',
-      href: '/work/kanto/',
-      image: '/proof/gke-soc2-readiness.webp',
-      alt: 'Kanto — Sol Labs GKE delivery platform',
-      area: 'GKE SOC 2 Readiness',
-      focus: 'Audit-ready delivery, access, and change control on GKE',
-      project: 'Sol Labs internal platform',
-      businessProblem:
-        'As GKE estates grow, releases slow down, access sprawls, and enterprise security reviews expose gaps in change control and evidence. SOC 2 and customer questionnaires stall until the platform can prove how delivery and access actually work.',
-      needs: [
-        'One consistent delivery model across GKE environments',
-        'Less standing access to cluster control planes',
-        'A reviewable history for infrastructure and application changes',
-        'Evidence the team can reuse in SOC 2 and enterprise questionnaires',
-      ],
-      approach:
-        'Sol Labs built a centralized delivery model: infrastructure and application changes move through Git review, access is identity-based and scoped to delivery, and private GKE environments stay consistent as the platform grows.',
-      beforeAfter: [
-        ['Separate access paths per environment', 'Centralized delivery across environments'],
-        ['Manual or inconsistent changes', 'Changes reviewed and recorded in Git'],
-        ['Verbal answers to security questionnaires', 'Documented delivery and access model'],
-      ],
-      results: [
-        'Infrastructure changes require human review before merge',
-        'Application delivery is managed consistently across environments',
-        'Private cluster APIs do not need to be exposed publicly for centralized delivery',
-      ],
-      projectHref: projects.kanto.href,
-      projectCta: 'View project',
-    },
-    {
       slug: 'pulsys',
       name: 'Pulsys',
-      eyebrow: 'In-house project',
       serviceSlug: 'ai-infrastructure',
       title: 'Lower AI infrastructure cost and startup delay',
       summary:
@@ -206,39 +198,38 @@ export const marketing = {
     {
       slug: 'slerp',
       name: 'Slerp',
-      eyebrow: 'In-house project',
       serviceSlug: 'application-development',
-      title: 'On-device AI inference that keeps media on the machine',
+      title: 'Secure on-device AI when sensitive media cannot go to the cloud',
       summary:
-        'A browser music visualizer that runs model inference on-device with WebGPU and ONNX — audio analysis, playback, and visuals stay local, so a performer’s set never leaves the machine.',
-      body: 'Inference runs in the browser on WebGPU; audio and media stay on the local machine instead of being uploaded to a server.',
-      metric: 'Inference runs on-device · media never uploaded',
+        'Artists use visualizations to market unreleased music — but cloud tools require uploading masters. Slerp runs ONNX beat detection on WebGPU in the browser so analysis and visuals stay local.',
+      body: 'On-device inference for sensitive media — ONNX models on WebGPU, with no upload path for unreleased audio.',
+      metric: 'ONNX on WebGPU · no upload path',
       href: '/work/slerp/',
       image: '/proof/private-vj-inference.webp',
-      alt: 'Slerp — Sol Labs in-browser, on-device inference visualizer',
-      area: 'On-device AI inference',
-      focus: 'On-device inference, privacy, and live control in the browser',
+      alt: 'Slerp — secure on-device AI visualizer for local audio',
+      area: 'Secure on-device AI',
+      focus: 'On-device inference without cloud upload for sensitive media',
       project: 'Sol Labs internal product',
       businessProblem:
-        'Browser tools that require uploading media lose a performer’s trust before the first use. Sending audio or model workloads to a server adds latency, cost, and a retention policy the user has to trust.',
+        'Musicians and performers need visualizations to market unreleased work. Cloud visualizers require uploading masters — a retention policy artists will not accept. Sensitive media needs AI analysis without sending data to a server.',
       needs: [
-        'Run model inference in the browser, not on a server',
-        'Keep audio and media on the local machine',
-        'Offer real live controls (EQ, MIDI, editable GLSL)',
-        'Make the privacy model obvious to the user',
+        'Run ONNX model inference in the browser, not on a server',
+        'Keep unreleased audio on the local machine',
+        'Beat detection and visuals for marketing, not just live performance',
+        'Make the no-upload trust model obvious from the first use',
       ],
       approach:
-        'Slerp runs model inference on-device with WebGPU and ONNX, audio analysis with Web Audio, and visuals with real-time WebGL shaders. Music files load from the local machine; playback, analysis, and inference run in the browser without upload.',
+        'Slerp runs ONNX beat-detection models on WebGPU with Web Audio analysis and real-time WebGL visuals. Music loads from the local machine; inference and playback stay in the browser without upload.',
       beforeAfter: [
-        ['Media uploaded to a server for processing', 'Files stay on the local machine'],
-        ['Inference runs remotely with per-request cost and latency', 'Inference runs on-device via WebGPU and ONNX'],
-        ['Trust depends on a server retention policy', 'Nothing to upload; the set never leaves the machine'],
+        ['Upload masters to a cloud visualizer', 'Load files locally; nothing sent to a server'],
+        ['Remote inference with latency and retention risk', 'ONNX inference on WebGPU on-device'],
+        ['Trust depends on a vendor retention policy', 'Sensitive media never leaves the machine'],
       ],
       results: [
-        'Model inference runs in the browser on WebGPU with ONNX',
+        'ONNX beat-detection models run in the browser on WebGPU',
         'Audio analysis and playback run locally via Web Audio',
-        'Real-time WebGL visuals with EQ, MIDI mapping, and editable GLSL',
-        'No upload path — performance media stays on the machine',
+        'Real-time WebGL visuals driven by on-device inference',
+        'No upload path — unreleased media stays on the machine',
       ],
       projectHref: projects.slerp.href,
       projectCta: 'Open Slerp',
@@ -279,16 +270,19 @@ export const outcomes = {
     caseStudyName: '',
     projectHref: engageHref,
     title: 'Platform Engineering on Google Cloud.',
-    // Zencore ZenBuild exact
-    lead: 'Advisory and hands-on implementation services delivered globally.',
-    // Zencore firm line (name swap) — consulting partner, not product
+    // Zencore Cloud Foundations capability (zencore.dev/solutions/cloud-native-infrastructure/)
+    lead: 'The core building blocks — Infrastructure as Code, policy governance, identity and access management, and networking — implemented as a rock-solid foundation for everything you deploy on Google Cloud.',
     pageDescription:
-      'Sol Labs is a Google Cloud consulting and engineering partner — platform engineering and infrastructure modernization on Google Cloud.',
+      'Platform engineering on Google Cloud — landing-zone Terraform, shared VPC, GKE, and reviewable delivery.',
     painTitle: "Architecture that can't keep up with growth",
     painBody:
-      'Environments drift, delivery slows, and every new service adds process instead of leverage.',
+      'Environments drift, delivery slows, and every new service adds process instead of leverage. Org folders, baseline IAM, and logging foundations reduce blank-page risk on Google Cloud — but starter Terraform rarely ships the enterprise landing zone your security team expects.',
     caseStudyTitle: '',
     caseStudyBody: '',
+    diagramsTitle: 'Reference architecture',
+    // Zencore overview line (zencore.dev/solutions/cloud-native-infrastructure/)
+    diagramsLead:
+      'We build and run the Google Cloud foundation your product teams ship on — org, shared VPC, environments, projects, and application delivery.',
     // Zencore capability labels (chip row / services list)
     work: [
       'Infrastructure Modernization',
@@ -302,11 +296,15 @@ export const outcomes = {
     // (zencore.dev/solutions/cloud-native-infrastructure/): overview line +
     // capability blocks, adapted to Sol Labs' GCP/GKE delivery.
     overview:
-      'We build and run the Google Cloud foundation your product teams ship on — so you deliver faster, more reliably, at a lower cost.',
+      'Deploy and customize the Google Cloud landing-zone Terraform architecture GCP recommends for enterprise — org, networking, environments, and CI/CD wired for audit from day one.',
     capabilities: [
       {
         title: 'Cloud Foundations',
         body: 'The core building blocks — Infrastructure as Code, policy governance, identity and access management, and networking — implemented as a rock-solid foundation for everything you deploy on Google Cloud.',
+      },
+      {
+        title: 'Shared VPC & Environment Isolation',
+        body: 'Shared VPC host and service projects, environment separation, VPN, and firewall rules — networking your security team can explain.',
       },
       {
         title: 'GKE & Kubernetes',
@@ -316,54 +314,103 @@ export const outcomes = {
         title: 'Software Delivery Automation',
         body: 'Modern CI/CD and a secure software supply chain — pipeline design, golden paths, and reviewable delivery your engineers can own.',
       },
-      {
-        title: 'Cloud Cost Optimization',
-        body: 'Assessments and continuous optimization to find and remove waste, so spend tracks the work actually being done.',
-      },
     ],
   },
   'gke-soc2-readiness': {
     slug: 'gke-soc2-readiness',
     featured: true,
-    caseStudySlug: 'kanto',
-    caseStudyName: 'Kanto',
-    projectHref: projects.kanto.href,
+    caseStudySlug: null as string | null,
+    caseStudyName: '',
+    projectHref: engageHref,
     title: 'GKE SOC 2 Readiness.',
-    lead: 'Compliance by default on GKE — so security reviews and SOC 2 stop blocking enterprise deals.',
+    // Offer-test definition — DoiT Optessa “audit-ready” + Zencore Regulatory Compliant Cloud Foundations
+    lead: 'A hands-on engagement that makes your GKE platform ready for enterprise security reviews — audit-ready delivery, scoped access, and the evidence auditors ask for.',
     pageDescription:
-      'GKE SOC 2 readiness — audit-ready delivery, identity-scoped access, and evidence for enterprise security reviews.',
+      'GKE SOC 2 readiness — audit-ready GKE delivery, standardized IAM, centralized logging, and evidence for enterprise security reviews.',
     painTitle: 'Enterprise reviews and SOC 2 expose GKE gaps',
+    // Linford (linfordco.com/blog/google-cloud-gcp-soc-2/) + DoiT Optessa challenge framing
     painBody:
-      'SOC 2 audits and customer security questionnaires expose IAM sprawl, weak change control, and missing evidence. Deals stall until the platform can prove how delivery and access work — with documentation, not verbal assurances.',
-    caseStudyTitle: 'Kanto',
-    caseStudyBody:
-      'Kanto is the case study for this offer: centralized, reviewable delivery for private GKE environments, with an access and change model built for audit and enterprise review.',
+      'Landing-zone Terraform and GRC tools cover part of the story — auditors still ask what you do with identities, change management, network boundaries, and workload privileges on the clusters you run. When GKE cannot explain who shipped what, when, and under which approval, deals stall and evidence-collection cycles stretch.',
+    caseStudyTitle: '',
+    caseStudyBody: '',
     work: [
-      'Reviewable infrastructure and application delivery on GKE',
-      'Identity-scoped access instead of standing cluster credentials',
-      'Evidence packs for SOC 2 and enterprise questionnaires',
-      'An operating model your engineers can own after the engagement',
+      'Private GKE and restricted control-plane access',
+      'Standardized IAM and Workload Identity Federation',
+      'Centralized logging and change evidence',
+      'Secure software supply chain on GKE',
     ],
     blogSlug: 'soc2-gke-series-b',
     cta: "Let's Talk",
+    // Zencore Cloud Security — Regulatory Compliant Cloud Foundations
     overview:
-      'GKE foundations built for enterprise security review — so SOC 2 audits and customer questionnaires stop blocking deals.',
+      'Compliant GKE foundations aligned to how enterprise security reviews and SOC 2 actually inspect delivery — private clusters, identity-scoped access, reviewable GitOps, and evidence your team can reuse.',
     capabilities: [
       {
-        title: 'Reviewable Delivery on GKE',
-        body: 'Infrastructure and application changes move through Git review, with a recorded history security teams can inspect.',
+        // Zencore Cloud Native — Kubernetes lifecycle + our blog GKE gap list
+        title: 'Private GKE Control Plane',
+        body: 'Private clusters and restricted control-plane access — so GitOps reaches the API with identity, not bastion kubeconfigs or broad authorized networks.',
       },
       {
-        title: 'Identity-Scoped Access',
-        body: 'Identity-based access scoped to delivery, replacing standing credentials on cluster control planes.',
+        // DoiT Optessa — standardized IAM; Onix review area — Identity & access management
+        title: 'Standardized IAM & Workload Identity',
+        body: 'Identity-scoped access for humans and workloads — Workload Identity Federation instead of long-lived service account keys on cluster control planes.',
       },
       {
-        title: 'SOC 2 Evidence Packs',
-        body: 'Documented delivery and access models your team can reuse in SOC 2 audits and enterprise security questionnaires.',
+        // Zencore Cloud Security — Secure Software Supply Chain
+        title: 'Secure Software Supply Chain',
+        body: 'End-to-end protection for development and deployment — centralized Argo CD with SSO, least-privilege RBAC, and production sync gates instead of a snowflake agent in every cluster.',
       },
       {
-        title: 'An Operating Model You Own',
-        body: 'A consistent, private-GKE operating model your engineers can run after the engagement ends.',
+        // DoiT Optessa — centralized logging; shortened evidence-collection cycles
+        title: 'Centralized Logging & Change Evidence',
+        body: 'Git history, sync events, and audit log retention your team can hand to auditors — so SOC 2 observation reviews existing evidence instead of scrambling for screenshots.',
+      },
+      {
+        // Onix review area — Policies and standards; SADA Onna Gatekeeper pattern (policy enforcement)
+        title: 'Admission Controls & Policy',
+        body: 'Namespace isolation, admission controls, and deploy-time policy — so the platform enforces the baseline instead of hoping people remember it.',
+      },
+      {
+        // Onix — Create a cloud security roadmap; Zencore Cloud Security Health Check insights
+        title: 'Operating Model & Roadmap',
+        body: 'A documented delivery and access model plus a clear roadmap your engineers can run after the engagement — not a black-box handoff.',
+      },
+    ],
+    // Onix Cloud Security Posture Review — Key benefits (onixnet.com/cloud-security-posture-review/)
+    includedTitle: 'Key benefits',
+    included: [
+      {
+        title: 'Prepare for audits',
+        body: 'Shortened evidence-collection cycles — documented delivery, access, and change history security questionnaires can trust.',
+      },
+      {
+        title: 'Clear roadmap for improvements',
+        body: 'Prioritized gaps against GKE and Google Cloud best practices, with milestones to the target operating state.',
+      },
+      {
+        title: 'Holistic view of risks',
+        body: 'Identity, network boundaries, workload privileges, and delivery paths inspected together — not as disconnected GRC checkboxes.',
+      },
+      {
+        title: 'Stay compliant',
+        body: 'An operating model your team owns after the engagement — Terraform, GitOps, and controls that keep working when auditors return.',
+      },
+    ],
+    // Onix methodology labels — Assess / Analyze / Recommend
+    // (onixnet.com/cloud-security-posture-review/); section title reuses firm methodTitle
+    engagementTitle: 'From first call to live platform',
+    engagementSteps: [
+      {
+        title: 'Assess',
+        body: 'Inventory GKE delivery paths, IAM, logging, and policy — confirm scope and review high-level security control concerns with your SMEs.',
+      },
+      {
+        title: 'Analyze',
+        body: 'Gap analysis against Google Cloud and GKE configuration best practices — prioritize findings by risk for enterprise review and SOC 2 observation.',
+      },
+      {
+        title: 'Recommend',
+        body: 'Document recommendations and a cloud security roadmap with key milestones — then implement private GKE, identity, GitOps, and evidence hooks your team can operate.',
       },
     ],
   },
@@ -418,38 +465,39 @@ export const outcomes = {
     caseStudySlug: 'slerp',
     caseStudyName: 'Slerp',
     projectHref: projects.slerp.href,
-    title: 'Application Development on Google Cloud.',
-    lead: 'Ship production apps on Cloud Run, GKE, and Vertex AI — starting with a build-vs-buy assessment so you do not custom-build what Google Cloud already sells.',
+    title: 'AI Application Development.',
+    // Zencore AI solutions exact (zencore.dev) — extended to on-device and hybrid paths
+    lead: 'Innovative solutions to leverage Artificial Intelligence on Google Cloud — and ship AI-powered applications on-device or hybrid when cloud inference is not the right fit.',
     pageDescription:
-      'Application development on Google Cloud — build-vs-buy assessment, Cloud Run and GKE delivery, and Vertex AI in product workflows.',
-    painTitle: 'Build vs buy blocking what you ship next',
+      'AI application development — cloud, on-device, and hybrid inference paths your team can ship and operate.',
+    painTitle: 'AI applications blocked by where inference runs',
     painBody:
-      'Product and platform teams stall between buying a managed GCP service and building custom software. The wrong choice burns engineering quarters — or leaves you maintaining something Google already operates better.',
+      'Cloud inference, on-device models, and hybrid paths each trade cost, privacy, and time-to-ship differently. Teams stall picking a deployment model before the first production release — or ship a demo that cannot operate in production.',
     caseStudyTitle: 'Slerp',
     caseStudyBody:
-      'Slerp is the in-house proof for this offer: a shipped browser application with on-device inference, WebGPU visuals, and a local-first trust model — built because off-the-shelf tools did not fit the performance and privacy bar.',
+      'Slerp is the proof for this offer: ONNX beat detection on WebGPU in the browser — visualizations for marketing unreleased music without uploading sensitive media to the cloud.',
     work: [
-      'Build-vs-buy assessment mapped to your GCP estate',
-      'Production apps on Cloud Run, GKE, and managed data services',
-      'Vertex AI integrated into product workflows where models add value',
+      'Cloud AI apps on Vertex AI, Cloud Run, and GKE',
+      'On-device inference with WebGPU and ONNX in the browser',
+      'Hybrid paths when sensitive data cannot go to the cloud',
       'Handoff your engineers can operate after the engagement',
     ],
     blogSlug: 'vj-trust-local-audio',
     cta: "Let's Talk",
     overview:
-      'We help you decide what to build on Google Cloud versus what to buy — then ship the build with production delivery on Cloud Run, GKE, and Vertex AI.',
+      'Ship AI-powered applications in the cloud, on-device, or hybrid — from Vertex AI on Google Cloud to ONNX on WebGPU in the browser.',
     capabilities: [
       {
-        title: 'Build vs Buy Assessment',
-        body: 'A structured read on managed GCP services versus custom software — so you do not spend quarters building what BigQuery, Pub/Sub, or a SaaS partner already covers.',
+        title: 'Cloud AI Applications',
+        body: 'Production AI features on Google Cloud — Vertex AI, Cloud Run, and GKE inference paths with IAM, cost controls, and observability your team can own.',
       },
       {
-        title: 'Cloud Run & GKE Delivery',
-        body: 'Production application delivery on Google Cloud — containerized services, CI/CD, identity, and observability your team can own.',
+        title: 'On-Device AI',
+        body: 'Models in the browser on WebGPU and ONNX — sensitive data stays local when cloud upload is not an option.',
       },
       {
-        title: 'Vertex AI in Product Workflows',
-        body: 'Where models belong in the product: inference paths, cost controls, and IAM-bound access — not a demo bolted onto an app.',
+        title: 'Hybrid & Private Inference',
+        body: 'Split paths when some workloads belong in the cloud and others must stay on-device or on-premises — one product, multiple inference surfaces.',
       },
       {
         title: 'Handoff Your Team Operates',

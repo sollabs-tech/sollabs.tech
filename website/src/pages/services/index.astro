@@ -62,10 +62,7 @@ const solutions = marketing.services.map((service, i) => {
 
             {
               solution.caseStudy ? (
-                <aside class="solutions__offer-proof" aria-label={`${solution.caseStudy.name} — in-house project`}>
-                  <p class="solutions__offer-proof-label">
-                    {marketing.caseStudyKind} · {solution.caseStudy.name}
-                  </p>
+                <aside class="solutions__offer-proof" aria-label={solution.caseStudy.name}>
                   <div class="solutions__offer-proof-grid">
                     <a
                       class="solutions__offer-proof-media"

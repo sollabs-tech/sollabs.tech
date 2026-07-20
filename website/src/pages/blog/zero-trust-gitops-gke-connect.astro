@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getPost } from '../../data/posts';
-import { engageHref, projects, withBase } from '../../site.config';
+import { engageHref, withBase } from '../../site.config';
 
 const post = getPost('zero-trust-gitops-gke-connect')!;
 const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
@@ -43,10 +43,11 @@ const structuredData = [
         and GKE hardened before workloads land — not a patchwork of reviews after the fact.
       </p>
       <p>
-        Sol Labs implements that path hands-on. The same architecture is built into
-        <a href={projects.kanto.href}>Kanto</a>: Zero Trust identity for cluster access, a
+        Sol Labs implements that path hands-on — Zero Trust identity for cluster access, a
         centralized Argo CD control plane, and GKE Connect so GitOps talks to private cluster APIs
-        without punching holes in the network.
+        without punching holes in the network. See the
+        <a href={withBase('/services/platform-engineering/')}>Platform Engineering</a> reference
+        architecture for the full landing-zone blueprint.
       </p>
 
       <h2>The problem most teams face</h2>
@@ -123,8 +124,8 @@ const structuredData = [
         </li>
       </ol>
       <p>
-        That is the Zero Trust delivery spine Kanto is built around: GitOps that can reach private
-        GKE without abandoning least privilege.
+        That is the Zero Trust delivery spine we implement for private GKE: GitOps that can reach
+        private clusters without abandoning least privilege.
       </p>
 
       <h2>What a secure platform architecture looks like</h2>
@@ -153,8 +154,8 @@ const structuredData = [
       <p>
         Want security designed into the delivery path — not bolted on before a deal? We start with a
         short architecture conversation: current posture, highest-risk gaps, and what Zero Trust
-        GitOps looks like on your fleet. Proof lives in
-        <a href={projects.kanto.href}>Kanto</a>.
+        GitOps looks like on your fleet. The reference architecture is on the
+        <a href={withBase('/services/platform-engineering/')}>Platform Engineering</a> service page.
       </p>
 
       <p>

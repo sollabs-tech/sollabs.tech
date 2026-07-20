@@ -13,7 +13,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outDir = path.join(__dirname, '../public/proof');
 
 const targets = [
-  { slug: 'gke-soc2-readiness', url: 'https://kanto.ai' },
   { slug: 'ai-infrastructure', url: 'https://pulsys.io' },
   { slug: 'private-vj-inference', url: 'https://slerp.audio' },
 ];

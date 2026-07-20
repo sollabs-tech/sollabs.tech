@@ -7,6 +7,7 @@
  * (cited strings) — do not invent buyer copy here (see no-invented-cta-copy).
  */
 import Layout from '../../layouts/Layout.astro';
+import FoundationDiagramViewer from '../../components/FoundationDiagramViewer.astro';
 import {
   caseStudyBySlug,
   engageHref,
@@ -28,13 +29,11 @@ const slug = Astro.params.slug as OutcomeSlug;
 const o = outcomes[slug];
 const caseStudy = caseStudyBySlug(o.caseStudySlug);
 const proofSlug =
-  caseStudy?.slug === 'kanto'
-    ? 'gke-soc2-readiness'
-    : caseStudy?.slug === 'pulsys'
-      ? 'ai-infrastructure'
-      : caseStudy?.slug === 'slerp'
-        ? 'private-vj-inference'
-        : slug;
+  caseStudy?.slug === 'pulsys'
+    ? 'ai-infrastructure'
+    : caseStudy?.slug === 'slerp'
+      ? 'private-vj-inference'
+      : slug;
 const proofPng = path.join(process.cwd(), 'public', 'proof', `${proofSlug}.png`);
 const proofWebp = path.join(process.cwd(), 'public', 'proof', `${proofSlug}.webp`);
 const proofWebp640 = path.join(process.cwd(), 'public', 'proof', `${proofSlug}-640.webp`);
@@ -96,6 +95,54 @@ const secondaryHref = caseStudy
       }
     </div>
   </section>
+
+  {
+    slug === 'platform-engineering' && 'diagramsTitle' in o ? (
+      <section class="foundation-diagrams page-wrap" aria-labelledby="foundation-diagrams-title">
+        <h2 id="foundation-diagrams-title" class="lp-section-title">
+          {o.diagramsTitle}
+        </h2>
+        <p class="foundation-diagrams__lead">{o.diagramsLead}</p>
+        <FoundationDiagramViewer />
+      </section>
+    ) : null
+  }
+
+  {
+    'included' in o && o.included ? (
+      <section class="service-included page-wrap" aria-labelledby="service-included-title">
+        <h2 id="service-included-title" class="lp-section-title">
+          {o.includedTitle}
+        </h2>
+        <div class="service-cap-grid">
+          {o.included.map((item) => (
+            <article class="service-cap">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    ) : null
+  }
+
+  {
+    'engagementSteps' in o && o.engagementSteps ? (
+      <section class="service-engage-steps page-wrap" aria-labelledby="service-engage-title">
+        <h2 id="service-engage-title" class="lp-section-title">
+          {o.engagementTitle}
+        </h2>
+        <ol class="method-list">
+          {o.engagementSteps.map((step) => (
+            <li>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+    ) : null
+  }
 
   <article class="page-wrap">
     <div class="prose">

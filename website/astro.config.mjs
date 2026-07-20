@@ -23,6 +23,10 @@ export default defineConfig({
     '/outcomes/gke-platform/': '/services/gke-soc2-readiness/',
     '/outcomes/model-cache-cost': '/services/ai-infrastructure/',
     '/outcomes/model-cache-cost/': '/services/ai-infrastructure/',
+    '/work/kanto': '/services/platform-engineering/',
+    '/work/kanto/': '/services/platform-engineering/',
+    '/services/gcp-cloud-foundation': '/services/platform-engineering/',
+    '/services/gcp-cloud-foundation/': '/services/platform-engineering/',
   },
   build: {
     // Tiny CSS bundle — inline to remove render-blocking stylesheet round-trip (Lighthouse mobile).
