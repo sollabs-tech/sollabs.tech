@@ -1,0 +1,177 @@
+---
+/**
+ * Individual service page. Customer-facing path is /services/<slug>/.
+ * "Outcomes" stays internal (the config object name only) — never in the URL,
+ * nav, or headings. Layout mirrors the services index page-hero so a service
+ * reads as a designed offer, not bare prose. Copy is reused from site.config
+ * (cited strings) — do not invent buyer copy here (see no-invented-cta-copy).
+ */
+import Layout from '../../layouts/Layout.astro';
+import {
+  caseStudyBySlug,
+  engageHref,
+  marketing,
+  outcomes,
+  withBase,
+  type OutcomeSlug,
+} from '../../site.config';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+
+export function getStaticPaths() {
+  return (Object.keys(outcomes) as OutcomeSlug[]).map((slug) => ({
+    params: { slug },
+  }));
+}
+
+const slug = Astro.params.slug as OutcomeSlug;
+const o = outcomes[slug];
+const caseStudy = caseStudyBySlug(o.caseStudySlug);
+const proofSlug =
+  caseStudy?.slug === 'kanto'
+    ? 'gke-soc2-readiness'
+    : caseStudy?.slug === 'pulsys'
+      ? 'ai-infrastructure'
+      : caseStudy?.slug === 'slerp'
+        ? 'private-vj-inference'
+        : slug;
+const proofPng = path.join(process.cwd(), 'public', 'proof', `${proofSlug}.png`);
+const proofWebp = path.join(process.cwd(), 'public', 'proof', `${proofSlug}.webp`);
+const proofWebp640 = path.join(process.cwd(), 'public', 'proof', `${proofSlug}-640.webp`);
+const hasProof = Boolean(caseStudy) && existsSync(proofPng);
+const hasWebp = existsSync(proofWebp);
+const hasWebp640 = existsSync(proofWebp640);
+const webpSrcset = [
+  hasWebp640 ? `${withBase(`/proof/${proofSlug}-640.webp`)} 640w` : null,
+  hasWebp ? `${withBase(`/proof/${proofSlug}.webp`)} 1280w` : null,
+]
+  .filter(Boolean)
+  .join(', ');
+
+const secondaryHref = caseStudy
+  ? withBase(caseStudy.href)
+  : o.featured
+    ? withBase(`/blog/${o.blogSlug}/`)
+    : null;
+---
+
+<Layout title={`${o.title} · Sol Labs`} description={o.pageDescription} current="services">
+  <section class="page-hero" aria-labelledby="service-title">
+    <div class="page-hero__bg" aria-hidden="true"></div>
+    <div class="page-hero__inner">
+      <p class="page-hero__eyebrow">{marketing.categoryEyebrow}</p>
+      <h1 id="service-title" class="page-hero__title">{o.title}</h1>
+      <p class="page-hero__lead">{o.lead}</p>
+      <div class="page-hero__cta">
+        <a
+          class="btn btn--primary btn--lg"
+          href={o.featured ? engageHref : o.projectHref}
+          data-analytics-event={o.featured ? 'primary_cta_click' : 'proof_view'}
+          data-analytics-prop-location={`service_${o.slug}`}
+        >
+          {o.cta}
+        </a>
+        {
+          secondaryHref ? (
+            <a class="btn btn--ghost btn--lg" href={secondaryHref}>
+              Learn more
+            </a>
+          ) : null
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="service-what page-wrap" aria-labelledby="service-what-title">
+    <h2 id="service-what-title" class="lp-section-title">What we typically work on</h2>
+    <p class="service-what__lead">{o.overview}</p>
+    <div class="service-cap-grid">
+      {
+        o.capabilities.map((cap) => (
+          <article class="service-cap">
+            <h3>{cap.title}</h3>
+            <p>{cap.body}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <article class="page-wrap">
+    <div class="prose">
+      <h2>{o.painTitle}</h2>
+      <p>{o.painBody}</p>
+
+      {
+        caseStudy ? (
+          <>
+            <p class="meta" style="margin-top: 2.5rem">
+              Featured case study
+            </p>
+            <h2>{o.caseStudyTitle}</h2>
+            <p>{o.caseStudyBody}</p>
+            <figure class="proof-frame">
+              {hasProof ? (
+                <picture>
+                  {webpSrcset && (
+                    <source
+                      type="image/webp"
+                      srcset={webpSrcset}
+                      sizes="(max-width: 720px) 100vw, 40rem"
+                    />
+                  )}
+                  <img
+                    src={withBase(`/proof/${proofSlug}.png`)}
+                    alt={`${caseStudy.name} case study screenshot`}
+                    width="1280"
+                    height="800"
+                    decoding="async"
+                    loading="eager"
+                    fetchpriority="high"
+                  />
+                </picture>
+              ) : (
+                <div class="proof-frame--placeholder">
+                  <p>
+                    Project:{' '}
+                    <a href={caseStudy.projectHref}>
+                      {caseStudy.projectHref.replace('https://', '')}
+                    </a>
+                  </p>
+                </div>
+              )}
+              <figcaption class="proof-frame__caption">
+                {caseStudy.name} case study — {caseStudy.area}.{' '}
+                <a href={withBase(caseStudy.href)}>Read the case study</a>
+                {' · '}
+                <a href={caseStudy.projectHref}>View project</a>
+              </figcaption>
+            </figure>
+          </>
+        ) : null
+      }
+    </div>
+
+    <aside class="service-final">
+      <h2>Let's Talk</h2>
+      {
+        o.featured ? (
+          <p>
+            30 minutes. No slides. Just an honest conversation about where you are and what it would
+            take to get you there.
+          </p>
+        ) : (
+          <p>View the project.</p>
+        )
+      }
+      <a
+        class="btn btn--primary btn--lg"
+        href={o.featured ? engageHref : o.projectHref}
+        data-analytics-event={o.featured ? 'primary_cta_click' : 'proof_view'}
+        data-analytics-prop-location={`service_${o.slug}_final`}
+      >
+        {o.cta}
+      </a>
+    </aside>
+  </article>
+</Layout>

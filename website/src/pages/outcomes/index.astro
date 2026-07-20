@@ -1,0 +1,6 @@
+---
+import { withBase } from '../../site.config';
+
+// Legacy URL — firm nav uses /services/ (Zencore “Solutions”, Out.Cloud service index).
+return Astro.redirect(withBase('/services/'), 301);
+---

@@ -1,0 +1,52 @@
+---
+description: HARD GATE — never invent CTAs or buyer copy; exact competitor strings only
+alwaysApply: true
+---
+
+# No invented CTAs or buyer copy
+
+## Absolute rule (user intent)
+
+> EVERY. SINGLE PIECE OF TEXT must have a direct reference from a successful
+> competitor. Do not invent. JUST COPY WHAT OTHERS DO.
+
+If you cannot paste the **exact competitor string** + **URL** from the citation
+matrix (`sollabs-private/docs/research/marketing-copy-citation-matrix.md`),
+**delete the string**. Do not paraphrase. Do not compose.
+
+## CTAs — locked allowlist only
+
+Button / link labels on buyer surfaces may **only** be one of these exact
+strings (character-for-character):
+
+| Allowed label | Source |
+|---------------|--------|
+| `Let's Talk` | Zencore `/en-us/lets-talk` |
+| `Learn more` | Zencore short CTA |
+| `Contact us` | Zencore nav |
+| `Read More` | Buoyant case-study cards |
+| `Book a 30-min Discovery Call` | Out.Cloud |
+| `Get in Touch` | Zencore / Shobhit |
+| `Explore service` | Out.Cloud service cards |
+
+### Forbidden (instant fail)
+
+- Any `Learn more about …` composition (even if Zencore has a similar long form — **we lock the short form**)
+- `View our solutions`, `Book a free architecture review`, `Schedule a briefing`
+- Interpolating service names into CTA labels (`Learn more about ${title}`)
+- Inventing section slogans when no competitor uses that exact H2
+- **Out.Cloud IDP product copy on Sol Labs buyer surfaces** (e.g. “Internal developer platforms where engineers deploy… without filing a ticket”, “platforms your teams actually use”) — that sells a platform product. Sol Labs sells **Google Cloud consulting**. Use Zencore consulting/implementation language instead.
+- **Implying paying clients.** Sol Labs has NO customers yet. Kanto & Pulsys are in-house builds. Never “Customer Spotlight”, “our customers love”, “trusted by”, or customer case-study framing. They live under a **Labs** section, each labeled **In-house project** (refs: Google Labs / Vercel Labs / Cloudflare).
+
+## Before claiming copy/UI work is done
+
+1. Cite URL + exact quote for every new/changed buyer string
+2. `cd website && npm run audit:copy` — must PASS
+3. Playwright screenshots + **read the PNGs** (see `playwright-visual-gate.mdc`)
+4. If the screenshot shows a CTA not on the allowlist → fix before responding
+
+## Skills
+
+- `evidence-based-copy`
+- `firm-scale-copy-gate`
+- `reference-driven-design`

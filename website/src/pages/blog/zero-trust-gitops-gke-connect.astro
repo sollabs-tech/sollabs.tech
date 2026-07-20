@@ -1,0 +1,174 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPost } from '../../data/posts';
+import { engageHref, projects, withBase } from '../../site.config';
+
+const post = getPost('zero-trust-gitops-gke-connect')!;
+const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
+const structuredData = [
+  {
+    '@type': 'BlogPosting',
+    headline: post.title,
+    datePublished: post.date,
+    description: post.description,
+    author: { '@type': 'Organization', name: 'Sol Labs' },
+    publisher: { '@id': `${siteOrigin}/#organization` },
+  },
+];
+---
+
+<Layout
+  title={`${post.title} · Sol Labs`}
+  description={post.description}
+  current="blog"
+  ogType="article"
+  publishedTime={post.date}
+  structuredData={structuredData}
+>
+  <article class="page-wrap">
+    <div class="prose">
+      <p class="meta">{post.date} · {post.icp}</p>
+      <h1>{post.title}</h1>
+      <p>
+        <strong>TL;DR:</strong> Zero Trust on GKE means the Kubernetes API is not a wide-open network
+        hop. Centralize Argo CD, reach private clusters through GKE Connect, and authenticate every
+        sync with identity — not long-lived kubeconfigs on a jump box.
+      </p>
+
+      <h2>GCP DevSecOps — Zero Trust delivery, not bolted-on scans</h2>
+      <p>
+        Security that ships with the platform beats security that arrives before an audit. The useful
+        pattern is the same one successful GCP DevSecOps practices describe: least-privilege IAM from
+        day one, CI/CD that authenticates without service-account keys, Terraform with policy gates,
+        and GKE hardened before workloads land — not a patchwork of reviews after the fact.
+      </p>
+      <p>
+        Sol Labs implements that path hands-on. The same architecture is built into
+        <a href={projects.kanto.href}>Kanto</a>: Zero Trust identity for cluster access, a
+        centralized Argo CD control plane, and GKE Connect so GitOps talks to private cluster APIs
+        without punching holes in the network.
+      </p>
+
+      <h2>The problem most teams face</h2>
+      <p>
+        Most GCP environments do not have a missing-scanner problem. They have a security-debt
+        problem — controls that were never designed in, now fragile and expensive to retrofit:
+      </p>
+      <ul>
+        <li>
+          IAM grew organically. Project-level bindings and convenience service accounts make “who can
+          do what” hard to explain to an auditor.
+        </li>
+        <li>
+          Service-account keys and long-lived kubeconfigs live in CI secrets, laptops, and ConfigMaps.
+        </li>
+        <li>
+          Pipelines and GitOps agents hold broader permissions than any single job needs — every
+          release becomes a potential misconfiguration vector.
+        </li>
+        <li>
+          Private GKE was enabled, but the control plane is still reached by brittle bastion paths or
+          broad authorized networks instead of identity-aware access.
+        </li>
+        <li>
+          Policies exist in docs; the platform does not enforce them on every sync.
+        </li>
+      </ul>
+      <p>
+        The result is a platform that works — and is one misconfiguration away from a serious incident.
+      </p>
+
+      <h2>What we typically put in place</h2>
+      <ul>
+        <li>
+          <strong>Zero Trust identity for cluster and GCP access.</strong> No implicit trust between
+          humans, CI, and workloads. Workload Identity Federation where GCP APIs are called; scoped
+          identities for every sync path.
+        </li>
+        <li>
+          <strong>Centralized Argo CD.</strong> One GitOps control plane for the fleet — SSO,
+          least-privilege RBAC, and production sync gates — instead of a snowflake Argo in every
+          cluster that nobody can audit the same way twice.
+        </li>
+        <li>
+          <strong>GKE Connect for Zero Trust Kubernetes API access.</strong> Private clusters stay
+          private. Centralized Argo CD reaches the API through Connect membership, so delivery does
+          not depend on a flat network path or a standing kubeconfig on a bastion.
+        </li>
+        <li>
+          <strong>Least-privilege IAM and key elimination.</strong> Scope service accounts to
+          workloads; replace static keys with federation for GKE, GitHub Actions, and Cloud Build.
+        </li>
+        <li>
+          <strong>Policy at deploy time.</strong> Admission controls and infrastructure policy checks
+          before apply/sync — so the platform enforces the baseline instead of hoping people remember
+          it.
+        </li>
+      </ul>
+
+      <h2>DevSecOps in practice: Connect + centralized Argo CD</h2>
+      <p>
+        The pattern that matters for multi-cluster GCP teams:
+      </p>
+      <ol>
+        <li>Clusters are private; the Kubernetes API is not on the public internet.</li>
+        <li>Clusters register to a fleet via GKE Connect / Anthos Connect membership.</li>
+        <li>
+          A centralized Argo CD instance authenticates to each cluster’s API through that Connect
+          path — identity-bound, auditable, without opening broad network trust to the control plane.
+        </li>
+        <li>
+          Desired state lives in Git. Humans approve. Sync events and Git history become the change
+          evidence trail — not screenshots from a last-minute scramble.
+        </li>
+      </ol>
+      <p>
+        That is the Zero Trust delivery spine Kanto is built around: GitOps that can reach private
+        GKE without abandoning least privilege.
+      </p>
+
+      <h2>What a secure platform architecture looks like</h2>
+      <ul>
+        <li>Workload Identity (and federation) for GCP authentication — no SA key files in the path</li>
+        <li>Private GKE nodes; restricted control-plane access</li>
+        <li>Centralized Argo CD with Connect-backed cluster registration</li>
+        <li>Namespace isolation, Pod Security baselines, and deploy-time policy</li>
+        <li>Centralized audit logs and retention tuned to how you actually operate</li>
+      </ul>
+
+      <h2>Who this is for</h2>
+      <ul>
+        <li>Teams on production GKE with security debt (keys, over-broad IAM, fragile GitOps)</li>
+        <li>Orgs under enterprise or compliance pressure that need structural controls, not binders</li>
+        <li>Platform teams consolidating many clusters onto one operable GitOps control plane</li>
+        <li>Migrations onto GCP where the security model must be cloud-native from the start</li>
+      </ul>
+      <p>
+        This is not a fit for single-VM hosting or teams without a delivery pipeline. If you need the
+        broader platform lane first, start with
+        <a href={withBase('/services/gke-soc2-readiness/')}>production GKE and GitOps</a>.
+      </p>
+
+      <h2>Next step</h2>
+      <p>
+        Want security designed into the delivery path — not bolted on before a deal? We start with a
+        short architecture conversation: current posture, highest-risk gaps, and what Zero Trust
+        GitOps looks like on your fleet. Proof lives in
+        <a href={projects.kanto.href}>Kanto</a>.
+      </p>
+
+      <p>
+        <a
+          class="btn btn--primary"
+          href={engageHref}
+          data-analytics-event="primary_cta_click"
+          data-analytics-prop-location="article_zero_trust_gitops"
+        >
+          Let's Talk
+        </a>
+        {' '}
+        <a class="btn btn--secondary" href={withBase('/services/gke-soc2-readiness/')}>GKE SOC 2 Readiness</a>
+      </p>
+    </div>
+  </article>
+</Layout>

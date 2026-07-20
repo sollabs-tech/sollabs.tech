@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getPost } from '../../data/posts';
-import { engageHref, products, withBase } from '../../site.config';
+import { engageHref, projects, withBase } from '../../site.config';
 
 const post = getPost('soc2-gke-series-b')!;
 const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
@@ -51,13 +51,24 @@ const structuredData = [
       <ul>
         <li>Private clusters and restricted control-plane access</li>
         <li>Workload Identity Federation instead of long-lived service account keys</li>
-        <li>GitOps (Argo CD) with SSO, least-privilege RBAC, and production sync gates</li>
+        <li>
+          Centralized Argo CD with SSO, least-privilege RBAC, and production sync gates — not a
+          snowflake agent in every cluster
+        </li>
+        <li>
+          GKE Connect so GitOps reaches private cluster APIs with identity — not bastion kubeconfigs
+        </li>
         <li>Git history and sync events retained as change evidence</li>
         <li>Admission controls, namespace isolation, and audit log retention for the observation window</li>
       </ul>
       <p>
         That gap is where enterprise deals stall: the GRC tool is green, the cluster still cannot
-        explain who shipped what, when, and under which approval.
+        explain who shipped what, when, and under which approval. For the Zero Trust delivery spine,
+        see{' '}
+        <a href={withBase('/blog/zero-trust-gitops-gke-connect/')}>
+          centralized Argo CD + GKE Connect
+        </a>
+        .
       </p>
 
       <h2>GRC tools are complementary</h2>
@@ -73,13 +84,21 @@ const structuredData = [
         A useful engagement does not “get you certified.” It leaves Terraform, GitOps, and a control
         map your team can operate — so SOC 2 observation is review of existing evidence, not a
         scramble. See the outcome page and
-        <a href={products.kanto.href}>Kanto</a> for the product receipt behind this lane.
+        <a href={projects.kanto.href}>Kanto</a> to see this GKE and GitOps architecture implemented
+        in a product.
       </p>
 
       <p>
-        <a class="btn btn--primary" href={engageHref}>Book a call</a>
+        <a
+          class="btn btn--primary"
+          href={engageHref}
+          data-analytics-event="primary_cta_click"
+          data-analytics-prop-location="article_soc2_gke"
+        >
+          Let's Talk
+        </a>
         {' '}
-        <a class="btn btn--secondary" href={withBase('/outcomes/gke-platform/')}>GKE platform</a>
+        <a class="btn btn--secondary" href={withBase('/services/gke-soc2-readiness/')}>GKE SOC 2 Readiness</a>
       </p>
     </div>
   </article>

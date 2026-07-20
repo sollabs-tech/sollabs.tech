@@ -12,7 +12,8 @@
     "screenshot": "npm run build && playwright test",
     "screenshot:update": "npm run build && playwright test --update-snapshots",
     "lighthouse": "npm run build && node scripts/lighthouse-gate.mjs",
-    "lighthouse:run": "node scripts/lighthouse.mjs"
+    "lighthouse:run": "node scripts/lighthouse.mjs",
+    "audit:copy": "node scripts/audit-copy.mjs"
   },
   "dependencies": {
     "@fontsource-variable/instrument-sans": "^5.2.8",

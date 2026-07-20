@@ -1,6 +1,15 @@
 ---
+/**
+ * Homepage hierarchy (Apple Design Award: clarity, one primary goal ≤5s, one job per section):
+ * 1. Named offer hero (Zencore slide pattern)
+ * 2. The three services
+ * 3. Out.Cloud outcome framing (pains → same three services)
+ * 4. Customer proof (case studies nested under matching services)
+ * 5. How engagements work
+ * 6. Final CTA
+ */
 import Layout from '../layouts/Layout.astro';
-import { brandName, engageHref, marketing, outcomes, withBase } from '../site.config';
+import { brandName, engageHref, marketing, withBase } from '../site.config';
 
 const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
 const structuredData = [
@@ -13,18 +22,9 @@ const structuredData = [
     areaServed: 'Worldwide',
     provider: { '@id': `${siteOrigin}/#organization` },
   },
-  {
-    '@type': 'FAQPage',
-    '@id': `${siteOrigin}/#faq`,
-    mainEntity: marketing.faq.map((item) => ({
-      '@type': 'Question',
-      name: item.q,
-      acceptedAnswer: { '@type': 'Answer', text: item.a },
-    })),
-  },
 ];
 
-const outcomeList = Object.values(outcomes);
+const serviceBySlug = Object.fromEntries(marketing.services.map((s) => [s.slug, s]));
 ---
 
 <Layout
@@ -33,62 +33,104 @@ const outcomeList = Object.values(outcomes);
   current="home"
   structuredData={structuredData}
 >
-  <div class="lp">
-    <section class="lp-hero" aria-labelledby="hero-title">
-      <div class="lp-hero__grid">
-        <div class="lp-hero__copy">
-          <p class="lp-kicker">Google Cloud · Engineering practice</p>
-          <h1 id="hero-title" class="lp-title">{marketing.heroTitle}</h1>
-          <p class="lp-lead">{marketing.heroLead}</p>
-          <div class="lp-cta-row">
-            <a class="btn btn--primary btn--lg" href={engageHref}>{marketing.primaryCta}</a>
-            <a class="btn btn--secondary btn--lg" href="#capabilities">{marketing.secondaryCta}</a>
-          </div>
-        </div>
-        <div class="lp-hero__visual" aria-label="Practice focus">
-          <div class="lp-hero__visual-inner">
-            <span class="lp-hero__visual-label">Focus</span>
-            <p class="lp-hero__visual-title">Platform · AI infra · Secure delivery</p>
-            <p class="lp-hero__visual-meta">
-              Hands-on Google Cloud work with products we ship as proof — not a compliance brochure.
-            </p>
-          </div>
-        </div>
+  <section class="zen-hero zen-hero--static" aria-labelledby="hero-title">
+    <div class="zen-hero__bg" aria-hidden="true">
+      <canvas class="zen-hero__canvas" data-hero-canvas></canvas>
+    </div>
+    <div class="zen-hero__inner">
+      <h1 id="hero-title" class="zen-hero__title">{marketing.heroTitle}</h1>
+      <p class="zen-hero__lead">{marketing.heroLead}</p>
+      <div class="zen-hero__cta-row">
+        <a
+          class="btn btn--primary btn--lg"
+          href={engageHref}
+          data-analytics-event="primary_cta_click"
+          data-analytics-prop-location="hero"
+        >
+          {marketing.heroPrimaryCta}
+        </a>
+        <a
+          class="btn btn--ghost btn--lg"
+          href={withBase(marketing.heroSecondaryHref)}
+          data-analytics-event="service_view"
+          data-analytics-prop-service={marketing.heroTitle}
+        >
+          {marketing.heroSecondaryCta}
+        </a>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="lp-trust" aria-label="Trust signals">
-      <ul class="lp-trust__row">
-        {marketing.trustPills.map((pill) => <li class="lp-trust__pill">{pill}</li>)}
-      </ul>
-    </section>
-
-    <section class="lp-section" aria-labelledby="challenges-title">
-      <h2 id="challenges-title" class="lp-section-title">{marketing.challengesTitle}</h2>
-      <p class="lp-section-lead">{marketing.clarityLine}</p>
+  <div class="lp">
+    <!-- PRIMARY: Our services — one card per offer (pain + Learn more). No second row. -->
+    <section class="lp-section" id="capabilities" aria-labelledby="capabilities-title">
+      <h2 id="capabilities-title" class="lp-section-title">{marketing.capabilitiesTitle}</h2>
       <div class="challenge-grid">
         {
-          marketing.challenges.map((c) => (
-            <div class="challenge-item">
-              <h3>{c.title}</h3>
-              <p>{c.body}</p>
-            </div>
-          ))
+          marketing.challenges.map((c) => {
+            const service = serviceBySlug[c.serviceSlug];
+            return (
+              <a
+                class="challenge-item challenge-item--link"
+                href={withBase(service.href)}
+                data-analytics-event="service_view"
+                data-analytics-prop-service={service.title}
+              >
+                <p class="challenge-item__service">{service.title}</p>
+                <h3>{c.title}</h3>
+                <p>{c.body}</p>
+                <span class="challenge-item__more">Learn more</span>
+              </a>
+            );
+          })
         }
       </div>
     </section>
 
-    <section class="lp-section" id="capabilities" aria-labelledby="capabilities-title">
-      <h2 id="capabilities-title" class="lp-section-title">{marketing.capabilitiesTitle}</h2>
-      <p class="lp-section-lead">{marketing.capabilitiesLead}</p>
-      <div class="outcome-grid">
+    <!-- TERTIARY: Labs — Sol Labs' own builds (not client work) -->
+    <section class="lp-section" aria-labelledby="proof-title">
+      <h2 id="proof-title" class="lp-section-title">{marketing.caseStudiesTitle}</h2>
+      <div class="proof-grid">
         {
-          outcomeList.map((o) => (
-            <a class="outcome-link" href={withBase(`/outcomes/${o.slug}/`)}>
-              <span class="outcome-link__product">{o.product}</span>
-              <h3>{o.title}</h3>
-              <p>{o.lead}</p>
-            </a>
+          marketing.caseStudies.map((caseStudy) => (
+            <article class="proof-card">
+              <a
+                class="proof-card__image"
+                href={withBase(caseStudy.href)}
+                data-analytics-event="proof_view"
+                data-analytics-prop-case-study={caseStudy.name}
+              >
+                <picture>
+                  <source
+                    type="image/webp"
+                    srcset={`${withBase(caseStudy.image.replace('.webp', '-640.webp'))} 640w, ${withBase(caseStudy.image)} 1280w`}
+                    sizes="(max-width: 899px) 100vw, 33vw"
+                  />
+                  <img
+                    src={withBase(caseStudy.image)}
+                    alt={caseStudy.alt}
+                    width="1280"
+                    height="800"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
+              </a>
+              <div class="proof-card__body">
+                <p class="proof-card__product">
+                  {marketing.caseStudyKind} · {caseStudy.name} · {caseStudy.area}
+                </p>
+                <h3>{caseStudy.title}</h3>
+                <p>{caseStudy.body}</p>
+                <a
+                  href={withBase(caseStudy.href)}
+                  data-analytics-event="proof_view"
+                  data-analytics-prop-case-study={caseStudy.name}
+                >
+                  {marketing.caseStudyCta}
+                </a>
+              </div>
+            </article>
           ))
         }
       </div>
@@ -108,24 +150,22 @@ const outcomeList = Object.values(outcomes);
       </ol>
     </section>
 
-    <section class="lp-section" aria-labelledby="faq-title">
-      <h2 id="faq-title" class="lp-section-title">{marketing.faqTitle}</h2>
-      <div class="faq">
-        {
-          marketing.faq.map((item) => (
-            <details>
-              <summary>{item.q}</summary>
-              <p>{item.a}</p>
-            </details>
-          ))
-        }
-      </div>
-    </section>
-
     <section class="lp-final" aria-labelledby="final-title">
       <h2 id="final-title" class="lp-section-title">{marketing.finalCtaHeadline}</h2>
       <p class="lp-section-lead">{marketing.finalCtaLead}</p>
-      <a class="btn btn--primary btn--lg" href={engageHref}>{marketing.finalPrimaryCta}</a>
+      <a
+        class="btn btn--primary btn--lg"
+        href={engageHref}
+        data-analytics-event="primary_cta_click"
+        data-analytics-prop-location="home_final"
+      >
+        {marketing.finalPrimaryCta}
+      </a>
     </section>
   </div>
 </Layout>
+
+<script>
+  import { initHero } from '../scripts/hero-webgl';
+  initHero();
+</script>

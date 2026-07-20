@@ -1,0 +1,130 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { engageHref, marketing, withBase } from '../../site.config';
+
+export function getStaticPaths() {
+  return marketing.caseStudies.map((caseStudy) => ({
+    params: { slug: caseStudy.slug },
+    props: { caseStudy },
+  }));
+}
+
+const { caseStudy } = Astro.props;
+const image640 = caseStudy.image.replace('.webp', '-640.webp');
+---
+
+<Layout
+  title={`${caseStudy.title} · Sol Labs`}
+  description={caseStudy.summary}
+  current="outcomes"
+>
+  <article class="page-wrap case-study">
+    <header class="case-study__header">
+      <p class="meta">{marketing.caseStudyKind} · {caseStudy.name}</p>
+      <h1>{caseStudy.title}</h1>
+      <p>{caseStudy.summary}</p>
+    </header>
+
+    <figure class="case-study__hero">
+      <picture>
+        <source
+          type="image/webp"
+          srcset={`${withBase(image640)} 640w, ${withBase(caseStudy.image)} 1280w`}
+          sizes="(max-width: 720px) 100vw, 72rem"
+        />
+        <img
+          src={withBase(caseStudy.image)}
+          alt={caseStudy.alt}
+          width="1280"
+          height="800"
+          fetchpriority="high"
+        />
+      </picture>
+    </figure>
+
+    <section class="case-study__section" aria-labelledby="at-a-glance">
+      <h2 id="at-a-glance">At a glance</h2>
+      <dl class="case-study__facts">
+        <div>
+          <dt>Area</dt>
+          <dd>{caseStudy.area}</dd>
+        </div>
+        <div>
+          <dt>Focus</dt>
+          <dd>{caseStudy.focus}</dd>
+        </div>
+        <div>
+          <dt>Project</dt>
+          <dd>{caseStudy.project}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="case-study__section case-study__prose" aria-labelledby="business-problem">
+      <p class="meta">The business problem</p>
+      <h2 id="business-problem">What was getting in the way</h2>
+      <p>{caseStudy.businessProblem}</p>
+    </section>
+
+    <section class="case-study__section case-study__prose" aria-labelledby="needed-to-change">
+      <p class="meta">What needed to change</p>
+      <h2 id="needed-to-change">The outcomes the system needed to deliver</h2>
+      <ul>
+        {caseStudy.needs.map((need) => <li>{need}</li>)}
+      </ul>
+    </section>
+
+    <section class="case-study__section case-study__prose" aria-labelledby="approach">
+      <p class="meta">The approach</p>
+      <h2 id="approach">How Sol Labs addressed it</h2>
+      <p>{caseStudy.approach}</p>
+    </section>
+
+    <section class="case-study__section" aria-labelledby="before-after">
+      <h2 id="before-after">Before vs. after</h2>
+      <div class="before-after">
+        {caseStudy.beforeAfter.map(([before, after]) => (
+          <div class="before-after__row">
+            <div>
+              <span>Before</span>
+              <p>{before}</p>
+            </div>
+            <div>
+              <span>After</span>
+              <p>{after}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="case-study__section" aria-labelledby="results">
+      <p class="meta">Results</p>
+      <h2 id="results">What changed</h2>
+      <ul class="result-list">
+        {caseStudy.results.map((result) => <li>{result}</li>)}
+      </ul>
+    </section>
+
+    <section class="case-study__cta" aria-labelledby="case-study-cta">
+      <h2 id="case-study-cta">Ready to ship faster with less overhead?</h2>
+      <p>
+        30 minutes. No slides. Just an honest conversation about where you are and what it would
+        take to get you there.
+      </p>
+      <div class="capability-block__actions">
+        <a
+          class="btn btn--primary btn--lg"
+          href={engageHref}
+          data-analytics-event="primary_cta_click"
+          data-analytics-prop-location={`case_study_${caseStudy.slug}`}
+        >
+          Let's Talk
+        </a>
+        <a class="btn btn--secondary btn--lg" href={caseStudy.projectHref}>
+          {caseStudy.projectCta}
+        </a>
+      </div>
+    </section>
+  </article>
+</Layout>

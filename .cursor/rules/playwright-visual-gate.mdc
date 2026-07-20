@@ -1,0 +1,53 @@
+---
+description: HARD GATE — marketing/UI changes are not done until Playwright screenshots are taken, read, and critiqued
+alwaysApply: true
+---
+
+# Playwright visual review gate (Sol Labs)
+
+## Absolute rule
+
+Any change to something the user **sees** (pages, layout, CSS, copy, CTAs, nav, hero, services, work, blog) is **NOT DONE** until **all** of the following complete, in order. Skipping any step is a fail.
+
+1. `cd website && npm run screenshot` (or targeted Playwright visual tests that write PNGs under `website/test-results/screenshots/`)
+2. **Read the PNG files with the Read tool** — desktop **and** mobile — for **every page that changed** (full-page shots). Listing files without opening them does not count.
+3. **Critique in the response** (must appear before claiming done), from three lenses:
+   - **UI**: hierarchy, spacing, contrast, broken/empty CTAs, cards vs. whitespace
+   - **UX**: scan path, duplication, dead ends, mobile wrap
+   - **ICP** (VP of Platform): after ~10s, can they answer what is offered, for whom, and what to do next?
+4. Fix every defect visible in those screenshots
+5. Re-shoot and re-read until the critique finds no blocking defects
+
+## Forbidden
+
+- Saying “done”, “locked”, “fixed”, or “shipped” after only editing code
+- Relying on `audit:copy` PASS or “tests passed” without reading PNGs
+- Screenshotting only the surface you intended to change while leaving a related index/home section unread
+- Treating the user’s pasted screenshot as optional — if they attach one, treat it as a failing review and fix that surface first
+- Shipping duplicate sections that restate the same services/offers in two blocks on one viewport
+
+## Response template (required before “done”)
+
+```
+### Visual review
+- Pages shot: [list]
+- UI: …
+- UX: …
+- ICP: …
+- Fixes applied (if any): …
+```
+
+## Skills this enforces
+
+- `reference-driven-design` — screenshot + compare step is mandatory
+- `evidence-based-copy` — no invented buyer strings
+- `firm-scale-copy-gate` — run `npm run audit:copy` before screenshot claim
+- `service-offer-clarity` — service surfaces must pass the offer test
+
+## Minimal done checklist
+
+- [ ] Built + Playwright screenshots written for every changed page
+- [ ] PNGs opened/read (desktop + mobile)
+- [ ] UI / UX / ICP critique written in the response
+- [ ] Visible defects fixed
+- [ ] Re-verified with a fresh screenshot when fixes were needed

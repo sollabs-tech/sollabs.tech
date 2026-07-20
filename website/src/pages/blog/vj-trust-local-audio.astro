@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getPost } from '../../data/posts';
-import { engageHref, products, withBase } from '../../site.config';
+import { projects } from '../../site.config';
 
 const post = getPost('vj-trust-local-audio')!;
 const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
@@ -64,14 +64,12 @@ const structuredData = [
       </ol>
       <p>
         That is the
-        <a href={products.slerp.href}>Slerp</a> receipt: audio-reactive WebGL with local playback and
+        <a href={projects.slerp.href}>Slerp</a>: audio-reactive WebGL with local playback and
         analysis. Shader craft is secondary to “your set does not leave the machine.”
       </p>
 
       <p>
-        <a class="btn btn--primary" href={engageHref}>Book a call</a>
-        {' '}
-        <a class="btn btn--secondary" href={withBase('/outcomes/private-vj-inference/')}>Private VJ outcome</a>
+        <a class="btn btn--primary" href={projects.slerp.href}>Open Slerp</a>
       </p>
     </div>
   </article>

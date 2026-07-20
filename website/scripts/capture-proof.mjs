@@ -7,13 +7,14 @@ import { chromium } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outDir = path.join(__dirname, '../public/proof');
 
 const targets = [
-  { slug: 'soc2-gke', url: 'https://kanto.ai' },
-  { slug: 'model-cache-cost', url: 'https://pulsys.io' },
+  { slug: 'gke-soc2-readiness', url: 'https://kanto.ai' },
+  { slug: 'ai-infrastructure', url: 'https://pulsys.io' },
   { slug: 'private-vj-inference', url: 'https://slerp.audio' },
 ];
 
@@ -29,8 +30,16 @@ for (const t of targets) {
   try {
     await page.goto(t.url, { waitUntil: 'domcontentloaded', timeout: 60_000 });
     await page.waitForTimeout(2000);
-    await page.screenshot({ path: dest, fullPage: false });
-    console.log('wrote', dest);
+    const screenshot = await page.screenshot({ path: dest, fullPage: false });
+    await sharp(screenshot)
+      .resize(1280, 800, { fit: 'cover' })
+      .webp({ quality: 80 })
+      .toFile(path.join(outDir, `${t.slug}.webp`));
+    await sharp(screenshot)
+      .resize(640, 400, { fit: 'cover' })
+      .webp({ quality: 78 })
+      .toFile(path.join(outDir, `${t.slug}-640.webp`));
+    console.log('wrote', t.slug, 'png + webp');
   } catch (err) {
     console.warn('failed', t.url, err.message);
   }

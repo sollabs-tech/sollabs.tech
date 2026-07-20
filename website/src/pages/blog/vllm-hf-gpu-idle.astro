@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getPost } from '../../data/posts';
-import { engageHref, products, withBase } from '../../site.config';
+import { engageHref, projects, withBase } from '../../site.config';
 
 const post = getPost('vllm-hf-gpu-idle')!;
 const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
@@ -61,9 +61,8 @@ const structuredData = [
       <p>
         Authenticated tokens raise Hub quotas. They do not remove Hub as a scale-out SPOF. A
         pull-through cache with pre-warm and optional cached-only misses keeps warm hits on disk you
-        control. That is the Pulsys outcome — client-compatible via <code>HF_ENDPOINT</code>, with
-        published warm-path measurements on
-        <a href={products.pulsys.href}>pulsys.io</a>.
+        control. The Pulsys case study measures that path and publishes the results on
+        <a href={projects.pulsys.href}>pulsys.io</a>.
       </p>
 
       <h2>Pitch order that matches buyer pain</h2>
@@ -75,9 +74,16 @@ const structuredData = [
       </ol>
 
       <p>
-        <a class="btn btn--primary" href={engageHref}>Book a call</a>
+        <a
+          class="btn btn--primary"
+          href={engageHref}
+          data-analytics-event="primary_cta_click"
+          data-analytics-prop-location="article_model_cache"
+        >
+          Let's Talk
+        </a>
         {' '}
-        <a class="btn btn--secondary" href={withBase('/outcomes/model-cache-cost/')}>Model cache outcome</a>
+        <a class="btn btn--secondary" href={withBase('/services/ai-infrastructure/')}>AI Infrastructure</a>
       </p>
     </div>
   </article>

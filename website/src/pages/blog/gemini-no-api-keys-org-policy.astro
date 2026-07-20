@@ -1,0 +1,273 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getPost } from '../../data/posts';
+import { engageHref, withBase } from '../../site.config';
+
+const post = getPost('gemini-no-api-keys-org-policy')!;
+const siteOrigin = Astro.site?.origin ?? 'https://sollabs.tech';
+const structuredData = [
+  {
+    '@type': 'BlogPosting',
+    headline: post.title,
+    datePublished: post.date,
+    description: post.description,
+    author: { '@type': 'Organization', name: 'Sol Labs' },
+    publisher: { '@id': `${siteOrigin}/#organization` },
+  },
+];
+---
+
+<Layout
+  title={`${post.title} · Sol Labs`}
+  description={post.description}
+  current="blog"
+  ogType="article"
+  publishedTime={post.date}
+  structuredData={structuredData}
+>
+  <article class="page-wrap">
+    <div class="prose">
+      <p class="meta">{post.date} · {post.icp}</p>
+      <h1>{post.title}</h1>
+      <p>
+        A Gemini API key in a client bundle is not a secret — it is a prepaid card anyone can copy.
+        Developer forums are full of four-figure surprise bills from keys scraped out of
+        <code>VITE_</code>, <code>NEXT_PUBLIC_</code>, or old public JavaScript assets. Google is
+        tightening the Gemini API key model (restricted keys, auth keys, blocks on unrestricted
+        keys), but the production answer on GCP is simpler: <strong>do not use standalone API keys
+        for Gemini at all</strong>. Use Vertex AI with IAM, short-lived tokens, and org policies
+        that stop new keys from being minted.
+      </p>
+
+      <h2>Why API keys fail as production credentials</h2>
+      <p>
+        A Gemini API key is a standard Google Cloud API key (
+        <a href="https://cloud.google.com/blog/topics/developers-practitioners/api-keys-are-open-secrets"
+          >Google Cloud blog: API keys are open secrets</a
+        >). It identifies a <em>project</em> for billing and quota — not a caller. Anyone who
+        possesses the string can spend your budget. That is why Google recommends API restrictions,
+        application restrictions, Secret Manager storage, and org-level key governance — and why
+        the Gemini API is moving away from long-lived unrestricted keys (
+        <a href="https://ai.google.dev/gemini-api/docs/api-key">Gemini API key documentation</a
+        >):
+      </p>
+      <ul>
+        <li>
+          Unrestricted standard keys are rejected; keys need explicit API restrictions to keep
+          working.
+        </li>
+        <li>
+          Starting September 2026, the Gemini API will reject requests from standard keys — migrate
+          to auth keys (bound to a service account) before then.
+        </li>
+        <li>
+          Dormant unrestricted keys can be blocked after extended inactivity (policy dates are
+          published in the same doc — verify before you rely on them).
+        </li>
+      </ul>
+      <p>
+        Auth keys are better than bare keys, but they are still keys. For a platform team running
+        Gemini inside GCP, Vertex AI + Application Default Credentials (ADC) is the path Google
+        documents for production (
+        <a
+          href="https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal"
+          >Vertex AI quickstart: ADC recommended</a
+        >).
+      </p>
+
+      <h2>Step 1 — Turn off new API keys at the org</h2>
+      <p>
+        Platform teams should assume developers will paste a key into a repo. Your control plane
+        needs to prevent minting keys in the first place, not chase leaks after the fact.
+      </p>
+
+      <h3>Managed constraints (baseline)</h3>
+      <p>
+        Google Cloud ships several managed org-policy constraints for credentials (
+        <a href="https://cloud.google.com/resource-manager/docs/organization-policy/restricting-service-accounts"
+          >Restrict IAM service account usage</a
+        >). At minimum, enforce these on the organization (or on folders that hold production
+        workloads):
+      </p>
+      <ul>
+        <li>
+          <code>iam.managed.disableServiceAccountApiKeyCreation</code> — blocks API keys bound to
+          service accounts. Many organizations created after May 2024 already inherit security
+          baseline constraints; verify rather than assume (
+          <a href="https://cloud.google.com/organization-policy/release-notes"
+            >Organization Policy release notes</a
+          >).
+        </li>
+        <li>
+          <code>iam.serviceAccountKeyExposureResponse</code> — set to <code>DISABLE_KEY</code> so
+          Google automatically disables service account keys and service-account-bound API keys
+          when exposure is detected. Google recommends this value explicitly in the same doc.
+        </li>
+        <li>
+          <code>iam.managed.disableServiceAccountKeyCreation</code> — stops new downloadable SA key
+          JSON files (you should be on Workload Identity / federation instead).
+        </li>
+      </ul>
+
+      <h3>Custom constraint — deny all API key creation</h3>
+      <p>
+        To block <em>every</em> new API key in the org (including AI Studio keys that never touch a
+        service account), define a custom constraint on the API Keys resource and enforce it with an
+        org policy (
+        <a href="https://cloud.google.com/api-keys/docs/custom-constraints"
+          >API Keys custom constraints</a
+        >):
+      </p>
+      <pre><code>{`name: organizations/ORGANIZATION_ID/customConstraints/custom.denyApiKeyCreate
+resourceTypes:
+  - apikeys.googleapis.com/Key
+methodTypes:
+  - CREATE
+condition: "true"
+actionType: DENY
+displayName: Deny creation of API keys
+description: >
+  Production workloads must use Vertex AI with IAM/ADC, not long-lived API keys.`}</code></pre>
+      <p>
+        Create the constraint, then bind it at org or folder scope with
+        <code>gcloud org-policies set-custom-constraint</code> and enforce it from the Organization
+        policies console. Keep a break-glass folder without the deny rule if a team still needs
+        time-boxed keys for a prototype — but not on the same project that holds production billing.
+      </p>
+
+      <h3>Inventory keys you already have</h3>
+      <p>
+        Org policy stops new keys; it does not delete old ones. Audit before you enforce:
+      </p>
+      <ul>
+        <li>
+          Cloud console → Asset Inventory, filter <code>apikeys.Key</code>, or use
+          <code>gcloud asset search-all-resources</code> at org scope (example in the
+          <a href="https://cloud.google.com/blog/topics/developers-practitioners/api-keys-are-open-secrets"
+            >API keys blog post</a
+          >).
+        </li>
+        <li>
+          Delete keys you do not recognize. Deleted keys can be restored for 30 days if you break
+          something legitimate.
+        </li>
+        <li>
+          Chart <code>serviceruntime.googleapis.com/api/request_count</code> by
+          <code>credential_id</code> to spot a single key burning quota (
+          <a href="https://cloud.google.com/blog/topics/developers-practitioners/api-keys-are-open-secrets"
+            >monitoring guidance</a
+          >).
+        </li>
+      </ul>
+
+      <h2>Step 2 — Run Gemini on Vertex AI with service accounts</h2>
+      <p>
+        Vertex AI Gemini models authenticate with OAuth2 access tokens from IAM — not static API
+        keys. Client libraries use Application Default Credentials (
+        <a href="https://cloud.google.com/vertex-ai/docs/authentication"
+          >Authenticate to Vertex AI</a
+        >):
+      </p>
+      <ol>
+        <li>
+          Enable <code>aiplatform.googleapis.com</code> on the project that will call Gemini.
+        </li>
+        <li>
+          Grant the runtime identity <code>roles/aiplatform.user</code> (Vertex AI User) — not
+          Owner, not Editor.
+        </li>
+        <li>
+          On GKE: attach a dedicated service account to the workload via Workload Identity — no key
+          file mounted in the pod (
+          <a href="https://cloud.google.com/vertex-ai/docs/authentication"
+            >On Google Cloud: use the attached service account</a
+          >).
+        </li>
+        <li>
+          On Cloud Run / GCE / Cloud Functions: set the service account on the resource; ADC picks
+          it up automatically.
+        </li>
+        <li>
+          Local dev: <code>gcloud auth application-default login</code>, or impersonate the runtime
+          SA with
+          <code>gcloud auth application-default login --impersonate-service-account=SA@PROJECT.iam.gserviceaccount.com</code>
+          (requires <code>roles/iam.serviceAccountTokenCreator</code>).
+        </li>
+      </ol>
+
+      <h3>Minimal Python call (ADC, no API key)</h3>
+      <pre><code>{`import vertexai
+from vertexai.generative_models import GenerativeModel
+
+vertexai.init(project="PROJECT_ID", location="us-central1")
+model = GenerativeModel("gemini-2.0-flash")
+response = model.generate_content("Summarize this week's platform incident.")
+print(response.text)`}</code></pre>
+      <p>
+        On a GKE pod with Workload Identity configured, this code is unchanged — ADC resolves the
+        pod's service account. Tokens are short-lived; there is nothing to paste into a frontend
+        env var.
+      </p>
+
+      <h3>OpenAI-compatible clients</h3>
+      <p>
+        If you already use the OpenAI SDK against Gemini, Vertex exposes an OpenAI-compatible
+        endpoint. You still fetch a short-lived access token with <code>google.auth.default</code>
+        and pass it as <code>api_key</code> — refresh before expiry (default one hour) (
+        <a
+          href="https://cloud.google.com/vertex-ai/generative-ai/docs/migrate/openai/auth-and-credentials"
+          >OpenAI auth on Vertex AI</a
+        >).
+      </p>
+
+      <h2>Step 3 — Billing guardrails (keys or not)</h2>
+      <p>
+        Org policy and IAM reduce credential theft; budgets cap damage if something still misbehaves.
+        Create a billing budget with an alert <em>and</em> a programmatic action to disable billing
+        on the project at a threshold you can live with. Incident write-ups from leaked Gemini keys
+        routinely mention multi-thousand-dollar single-day spikes — a $50 hard stop beats a support
+        ticket after the fact.
+      </p>
+
+      <h2>Decision table</h2>
+      <ul>
+        <li>
+          <strong>Prototype in AI Studio, solo dev:</strong> restricted auth key in a non-prod
+          project, billing budget, never in client-side code.
+        </li>
+        <li>
+          <strong>Production app on GCP:</strong> Vertex AI + dedicated service account +
+          Workload Identity / Cloud Run SA — org policy denies <code>apikeys.googleapis.com/Key</code>
+          CREATE.
+        </li>
+        <li>
+          <strong>CI calling Gemini:</strong> WIF or SA attached to the runner; same Vertex path;
+          no <code>GEMINI_API_KEY</code> in GitHub Actions secrets if the repo is broad-access.
+        </li>
+      </ul>
+
+      <h2>What we implement for teams</h2>
+      <p>
+        This is the same control plane work we ship for AI infrastructure engagements: identity-bound
+        access to model endpoints, no long-lived secrets in the delivery path, and spend visibility
+        before finance notices. If you are standardizing Gemini across GKE or Cloud Run, start with
+        org policy + Vertex — not another rotated API key.
+      </p>
+
+      <p>
+        <a
+          class="btn btn--primary"
+          href={engageHref}
+          data-analytics-event="primary_cta_click"
+          data-analytics-prop-location="article_gemini_no_api_keys"
+        >
+          Let's Talk
+        </a>
+        {' '}
+        <a class="btn btn--secondary" href={withBase('/services/ai-infrastructure/')}
+          >AI Infrastructure</a
+        >
+      </p>
+    </div>
+  </article>
+</Layout>

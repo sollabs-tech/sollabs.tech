@@ -14,7 +14,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
 const outDir = path.join(root, 'lighthouse-results');
 const baseUrl = process.env.PREVIEW_URL ?? 'http://127.0.0.1:4391/';
-const routes = (process.env.LH_ROUTES ?? '/,/outcomes/gke-platform/,/engage/')
+const routes = (process.env.LH_ROUTES ?? '/,/services/,/work/pulsys/,/engage/')
   .split(',')
   .map((r) => r.trim())
   .filter(Boolean);

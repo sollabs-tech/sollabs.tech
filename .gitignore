@@ -8,6 +8,7 @@ website/lighthouse-results/
 *.log
 .env
 .env.*
+!website/.env.example
 
 # Internal — never publish
 docs/strategy/

@@ -1,37 +1,112 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { brandName, contactEmail, marketing } from '../site.config';
+import { brandName, calUrl, contactEmail, marketing } from '../site.config';
+
+const emailHref = `mailto:${contactEmail}?subject=Sol%20Labs%20Google%20Cloud`;
+let calLink = '';
+try {
+  const parsed = new URL(calUrl);
+  if (parsed.hostname === 'cal.com' || parsed.hostname.endsWith('.cal.com')) {
+    calLink = parsed.pathname.replace(/^\/|\/$/g, '');
+  }
+} catch {
+  // PUBLIC_CAL_URL is optional; email remains a working fallback.
+}
 ---
 
 <Layout
-  title={`Engage · ${brandName}`}
-  description="Talk to Sol Labs about Google Cloud platform, AI infrastructure, or secure delivery."
+  title={`Contact Us · ${brandName}`}
+  description="Contact Us. Ready to get started?"
   current="engage"
 >
   <div class="page-wrap">
     <div class="prose">
-      <h1>Tell us what is blocking production.</h1>
+      <!-- Zencore /lets-talk -->
+      <p class="meta">Get In Touch</p>
+      <h1>Contact Us</h1>
+      <p>Ready to get started?</p>
+      <p>Our initial consultation is an understanding of your business and objectives.</p>
+
+      <!-- Out.Cloud -->
       <p>
-        Discovery is short. If there is a fit, you get a fixed statement of work with a done
-        definition — not an open retainer by default.
+        30 minutes. No slides. Just an honest conversation about where you are and what it would
+        take to get you there.
       </p>
-
-      <h2>Good fits</h2>
-      <ul>
-        <li>GCP platform / GKE / GitOps that needs to be operable</li>
-        <li>AI inference fleets burning time on model pulls and Hub dependency</li>
-        <li>Secure delivery wired into how you ship — not bolted on for a deal</li>
-      </ul>
-
       <p>{marketing.clarityLine}</p>
 
-      <h2>Book</h2>
-      <p>
-        <a href={`mailto:${contactEmail}?subject=Sol%20Labs%20discovery`}>{contactEmail}</a>
-      </p>
-      <a class="btn btn--primary btn--lg" href={`mailto:${contactEmail}?subject=Sol%20Labs%20discovery`}
-        >Email to talk</a
-      >
+      {
+        calLink ? (
+          <>
+            <h2 id="calendar">Let's Talk</h2>
+            <div
+              id="cal-inline"
+              class="cal-embed"
+              aria-label="Let's Talk — Sol Labs Google Cloud"
+            />
+            <p class="booking-fallback">
+              Calendar not loading?{' '}
+              <a href={calUrl} data-analytics-event="cal_open" rel="noopener noreferrer">
+                Open Cal.com
+              </a>
+              {' or '}
+              <a href={emailHref}>email {contactEmail}</a>.
+            </p>
+            <script is:inline define:vars={{ calLink }}>
+              (function (C, A, L) {
+                const push = (target, args) => target.q.push(args);
+                const document = C.document;
+                C.Cal =
+                  C.Cal ||
+                  function () {
+                    const cal = C.Cal;
+                    const args = arguments;
+                    if (!cal.loaded) {
+                      cal.ns = {};
+                      cal.q = cal.q || [];
+                      const script = document.createElement('script');
+                      script.src = A;
+                      document.head.appendChild(script);
+                      cal.loaded = true;
+                    }
+                    if (args[0] === L) {
+                      push(cal, args);
+                      return;
+                    }
+                    push(cal, args);
+                  };
+              })(window, 'https://app.cal.com/embed/embed.js', 'init');
+
+              Cal('init', { origin: 'https://cal.com' });
+              Cal('on', {
+                action: 'bookingSuccessfulV2',
+                callback: () => window.plausible?.('booking_complete'),
+              });
+              Cal('inline', {
+                elementOrSelector: '#cal-inline',
+                calLink,
+                config: { layout: 'month_view', theme: 'light' },
+              });
+              window.plausible?.('cal_open', { props: { location: 'engage_embed' } });
+            </script>
+          </>
+        ) : (
+          <>
+            <h2>Let's Talk</h2>
+            <p>
+              Calendar availability is being configured. Email the blocker and preferred timezone;
+              we will reply with times.
+            </p>
+            <a
+              class="btn btn--primary btn--lg"
+              href={emailHref}
+              data-analytics-event="cal_open"
+              data-analytics-prop-location="engage_email_fallback"
+            >
+              Get in Touch
+            </a>
+          </>
+        )
+      }
     </div>
   </div>
 </Layout>

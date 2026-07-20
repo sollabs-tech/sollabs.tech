@@ -9,7 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pub = path.join(__dirname, '../public');
 const brandDir = path.join(pub, 'brand');
 
-// Light consulting palette — GCP-adjacent blue, navy ink (Buoyant / partner-site refs).
+// Light consulting palette — GCP-adjacent blue and navy ink.
 const ACCENT = '#0B57D0';
 const BG = '#0B1F33';
 const INK = '#F4F6F9';

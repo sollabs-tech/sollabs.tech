@@ -1,0 +1,150 @@
+---
+/**
+ * Services index — one domain per block (ADA hierarchy).
+ * Each service is a self-contained unit: name → pain → work → nested case study if any.
+ * No separate “case studies domain” competing with services.
+ */
+import Layout from '../../layouts/Layout.astro';
+import {
+  brandName,
+  caseStudyBySlug,
+  engageHref,
+  marketing,
+  outcomes,
+  withBase,
+} from '../../site.config';
+
+const solutions = marketing.services.map((service, i) => {
+  const caseStudy = caseStudyBySlug(service.caseStudySlug);
+  const detail = outcomes[service.slug as keyof typeof outcomes];
+  return { ...service, index: i, caseStudy, capabilities: detail?.capabilities ?? [] };
+});
+---
+
+<Layout
+  title={`Our services · ${brandName}`}
+  description={marketing.pageDescription}
+  current="services"
+>
+  <section class="page-hero" aria-labelledby="solutions-title">
+    <div class="page-hero__bg" aria-hidden="true"></div>
+    <div class="page-hero__inner">
+      <p class="page-hero__eyebrow">{marketing.categoryEyebrow}</p>
+      <h1 id="solutions-title" class="page-hero__title">{marketing.capabilitiesTitle}</h1>
+    </div>
+  </section>
+
+  <div class="solutions">
+    <ol class="solutions__catalog">
+      {
+        solutions.map((solution) => (
+          <li class="solutions__offer">
+            <header class="solutions__offer-head">
+              <span class="solutions__offer-num" aria-hidden="true">
+                {String(solution.index + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <h2 class="solutions__offer-title">
+                  <a href={withBase(solution.href)}>{solution.title}</a>
+                </h2>
+                <p class="solutions__offer-body">{solution.body}</p>
+                {
+                  solution.capabilities.length ? (
+                    <ul class="solutions__offer-caps" aria-label="What's included">
+                      {solution.capabilities.map((cap) => (
+                        <li>{cap.title}</li>
+                      ))}
+                    </ul>
+                  ) : null
+                }
+              </div>
+            </header>
+
+            {
+              solution.caseStudy ? (
+                <aside class="solutions__offer-proof" aria-label={`${solution.caseStudy.name} — in-house project`}>
+                  <p class="solutions__offer-proof-label">
+                    {marketing.caseStudyKind} · {solution.caseStudy.name}
+                  </p>
+                  <div class="solutions__offer-proof-grid">
+                    <a
+                      class="solutions__offer-proof-media"
+                      href={withBase(solution.caseStudy.href)}
+                      tabindex="-1"
+                      aria-hidden="true"
+                    >
+                      <picture>
+                        <source
+                          type="image/webp"
+                          srcset={`${withBase(solution.caseStudy.image.replace('.webp', '-640.webp'))} 640w, ${withBase(solution.caseStudy.image)} 1280w`}
+                          sizes="(max-width: 799px) 100vw, 22rem"
+                        />
+                        <img
+                          src={withBase(solution.caseStudy.image)}
+                          alt=""
+                          width="1280"
+                          height="800"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </picture>
+                    </a>
+                    <div>
+                      <h3>
+                        <a href={withBase(solution.caseStudy.href)}>{solution.caseStudy.title}</a>
+                      </h3>
+                      <p>{solution.caseStudy.summary}</p>
+                      <a class="solution-tile__link" href={withBase(solution.caseStudy.href)}>
+                        {marketing.caseStudyCta}
+                      </a>
+                    </div>
+                  </div>
+                </aside>
+              ) : null
+            }
+
+            <a
+              class="btn btn--secondary"
+              href={withBase(solution.href)}
+              data-analytics-event="service_view"
+              data-analytics-prop-service={solution.title}
+            >
+              Learn more
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+
+    <section class="solutions__method" aria-labelledby="method-title">
+      <h2 id="method-title" class="solutions__section-title">{marketing.methodTitle}</h2>
+      <ol class="solutions__steps">
+        {
+          marketing.methodSteps.map((step, i) => (
+            <li>
+              <span class="solutions__step-num" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="solutions__final" aria-labelledby="solutions-final">
+      <h2 id="solutions-final">{marketing.finalCtaHeadline}</h2>
+      <p>{marketing.finalCtaLead}</p>
+      <p class="solutions__final-note">{marketing.clarityLine}</p>
+      <a
+        class="btn btn--primary btn--lg"
+        href={engageHref}
+        data-analytics-event="primary_cta_click"
+        data-analytics-prop-location="services_final"
+      >
+        {marketing.finalPrimaryCta}
+      </a>
+    </section>
+  </div>
+</Layout>

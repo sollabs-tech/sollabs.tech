@@ -1,45 +1,41 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { brandName, products } from '../site.config';
+import { brandName, engageHref, marketing, withBase } from '../site.config';
 ---
 
 <Layout
   title={`About · ${brandName}`}
-  description="Sol Labs is a Google Cloud consulting and engineering practice with shipped product proof."
+  description={marketing.pageDescription}
   current="about"
 >
   <div class="page-wrap">
     <div class="prose">
-      <h1>Builders on Google Cloud.</h1>
+      <p class="meta">{marketing.categoryEyebrow}</p>
+      <h1>{brandName}</h1>
+      <!-- Zencore firm positioning (name swap) -->
       <p>
-        {brandName} is a consulting and engineering practice. We help teams get production results on
-        Google Cloud — platforms, AI infrastructure, and secure delivery — and we prove delivery with
-        products we ship.
+        {brandName} is a Google Cloud consulting and engineering firm. We offer implementation and
+        operational services across platform engineering, GKE security, and AI infrastructure.
       </p>
-      <p>
-        Modeled after boutique GCP engineering partners: hands-on implementation, scoped work, and
-        ownership that stays with your team.
-      </p>
-
-      <h2>Shipped proof</h2>
+      <h2>{marketing.capabilitiesTitle}</h2>
       <ul>
-        <li>
-          <a href={products.kanto.href}>{products.kanto.name}</a> — GCP / GKE platform patterns
-        </li>
-        <li>
-          <a href={products.pulsys.href}>{products.pulsys.name}</a> — Hugging Face pull-through cache
-        </li>
-        <li>
-          <a href={products.slerp.href}>{products.slerp.name}</a> — private in-browser audio-reactive
-          product
-        </li>
+        {
+          marketing.services.map((s) => (
+            <li>
+              <a href={withBase(s.href)}>{s.title}</a> — {s.body}
+            </li>
+          ))
+        }
       </ul>
 
-      <h2>What we are not</h2>
-      <p>
-        Not a compliance-only shop. Not a slide agency that hands you juniors after the pitch. If the
-        work is not a fit, we will say so on the first call.
-      </p>
+      <a
+        class="btn btn--primary btn--lg"
+        href={engageHref}
+        data-analytics-event="primary_cta_click"
+        data-analytics-prop-location="about"
+      >
+        {marketing.primaryCta}
+      </a>
     </div>
   </div>
 </Layout>
